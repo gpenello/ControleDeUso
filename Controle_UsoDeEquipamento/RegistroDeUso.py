@@ -5,11 +5,16 @@ from PyQt5 import uic, QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QApplication, QInputDialog, QMessageBox, QDesktopWidget, QSplashScreen
 import sys
 import time
+import os
+import subprocess
+import signal
 
 import criptografarPassword as cript
 from BancoDeDados_Local import BancoDeDados
 import paramikoClient
 
+
+k40_whisperer = '/home/germano/Documents/Faculdade/UFRJ/Programas/Python/registro-de-uso-presenca-lab/K40_Whisperer-0.37_src/k40_whisperer.py'
 
 class DesignerMainWindow(QMainWindow):
 
@@ -17,6 +22,7 @@ class DesignerMainWindow(QMainWindow):
     TelaCheia = True
     servidorFTP = False
     host, user, senha = ('raspberrypi.local', 'pi', 'lab2')
+    
 
     # -----------------------------------------------
     # IMPORTANTE: FALTA INTEGRAR OS BANCOS DE DADOS LOCAIS COM O DO RPi.
@@ -60,6 +66,7 @@ class DesignerMainWindow(QMainWindow):
         self.center()
         self.permitir_min = False
         self.setWindowIcon(QtGui.QIcon('./imagens/icon.png'))
+        self.k40_whisperer = subprocess.Popen(['sudo', 'python3', k40_whisperer])
 
     def baixar_db_usuarios(self):
         try:
@@ -136,14 +143,14 @@ class DesignerMainWindow(QMainWindow):
                                   "Senha de autorização não confere!")
 
     def get_login_pass(self):
-#        if self.servidorFTP is True:
-#            self.baixar_db_usuarios()
-#        self.db_usuario = BancoDeDados("./log/BancoDeDados_Usuarios.db")
+        # if self.servidorFTP is True:
+        #     self.baixar_db_usuarios()
+        # self.db_usuario = BancoDeDados("./log/BancoDeDados_Usuarios.db")
         login = self.txt_login.text()
         password = self.txt_password.text()
         self.txt_login.setText('')
         self.txt_password.setText('')
-#        dados_usuario = self.db_usuario.check_usuario(login)
+        # dados_usuario = self.db_usuario.check_usuario(login)
         dados_usuario = self.db.check_usuario(login)
         if login == 'admin':
             if cript.check_autorizacao(password):
@@ -156,8 +163,8 @@ class DesignerMainWindow(QMainWindow):
                                   "Senha do administrador não confere!")
         elif dados_usuario != []:
             if self.forcar_presenca is True:
-#                bool_presente = self.db_usuario.check_login_presenca_em_aberto(
-#                    login)
+                # bool_presente = self.db_usuario.check_login_presenca_em_aberto(
+                #     login)
                 bool_presente = self.db.check_login_presenca_em_aberto(
                     login)
                 if bool_presente is False:
@@ -182,6 +189,8 @@ class DesignerMainWindow(QMainWindow):
                         self.janelatempo.show()
                         self.janelatempo.activateWindow()
                         self.keep_minimized()
+                        self.abrir_k40_whisperer()
+
 
                 else:
                     self.db.set_hora_inicio(login, self.equipamento)
@@ -189,10 +198,16 @@ class DesignerMainWindow(QMainWindow):
                     self.janelatempo.show()
                     self.janelatempo.activateWindow()
                     self.keep_minimized()
+                    self.abrir_k40_whisperer()
+                    
             else:
                 QMessageBox.about(self, "Erro!", str("Senha não confere!"))
         else:
             QMessageBox.about(self, "Erro!", "Usuário não cadastrado!")
+
+    def abrir_k40_whisperer(self):
+        if self.k40_whisperer.poll() != None:
+            self.k40_whisperer = subprocess.Popen(['sudo', 'python3', k40_whisperer])
 
     def changeEvent(self, e):
         if e.type() == e.WindowStateChange:
@@ -204,6 +219,7 @@ class DesignerMainWindow(QMainWindow):
                 else:
                     self.showNormal()
                 self.db.export_all_db_to_csv()
+                
                 if self.servidorFTP is True:
                     self.enviar_db_local_FTP()
 
@@ -240,10 +256,10 @@ class TelaTodosUsuarios(QMainWindow):
     def popular_combobox(self):
         self.cbx_logins.clear()
         self.cbx_logins.addItem("Selecione o usuário:")
-#        todos_usuarios = self.janelaPrincipal.db_usuario.check_todos_usuarios_do_equip('LaserCutter')
+        # todos_usuarios = self.janelaPrincipal.db_usuario.check_todos_usuarios_do_equip('LaserCutter')
         todos_usuarios = self.janelaPrincipal.db.check_todos_usuarios_do_equip('LaserCutter')
         self.cbx_logins.addItems(todos_usuarios)
-#        todos_superusuarios = self.janelaPrincipal.db_usuario.check_todos_superusuarios_do_equip('LaserCutter')
+        # todos_superusuarios = self.janelaPrincipal.db_usuario.check_todos_superusuarios_do_equip('LaserCutter')
         todos_superusuarios = self.janelaPrincipal.db.check_todos_superusuarios_do_equip('LaserCutter')
         self.cbx_logins.addItems(todos_superusuarios)
 
@@ -263,7 +279,7 @@ class TelaTodosUsuarios(QMainWindow):
 
         if ok:
             if cript.check_autorizacao(senha_autorizacao):
-#                    self.janelaPrincipal.db_usuario.remove_usuario(login)
+                    # self.janelaPrincipal.db_usuario.remove_usuario(login)
                 self.janelaPrincipal.db.remove_usuario(login)
                 QMessageBox.about(self, "OK!", login + " removido do banco de dados!")
             else:
@@ -277,7 +293,7 @@ class TelaTodosUsuarios(QMainWindow):
 
     def login_selecionado(self, idx):
         login = self.cbx_logins.currentText()
-#        dados = self.janelaPrincipal.db_usuario.check_usuario(login)
+        # dados = self.janelaPrincipal.db_usuario.check_usuario(login)
         dados = self.janelaPrincipal.db.check_usuario(login)
         idx, tag, login, nome, email, add_por, permissao, senha = dados
         if tag == None:
@@ -333,7 +349,7 @@ class NovoUsuario(QMainWindow):
         self.txt_password.setText('')
         self.txt_password_2.setText('')
 
-#        dados = self.janelaPrincipal.db_usuario.check_usuario(login)
+        # dados = self.janelaPrincipal.db_usuario.check_usuario(login)
         dados = self.janelaPrincipal.db.check_usuario(login)
         if dados != []:
             QMessageBox.about(self, "Usuário já existe!", "Todos os dados deste usuário serão recadastrados.")
@@ -346,10 +362,10 @@ class NovoUsuario(QMainWindow):
                 QtWidgets.QLineEdit.Password)
             if ok:
                 if cript.check_autorizacao(senha_autorizacao):
-#                    self.janelaPrincipal.db_usuario.remove_usuario(login)
+                    # self.janelaPrincipal.db_usuario.remove_usuario(login)
                     self.janelaPrincipal.db.remove_usuario(login)
-#                    self.janelaPrincipal.db_usuario.add_novo_usuario(
-#                        None, login, nome, email, password, "Administrador")
+                    # self.janelaPrincipal.db_usuario.add_novo_usuario(
+                        # None, login, nome, email, password, "Administrador")
                     self.janelaPrincipal.db.add_novo_usuario(
                         None, login, nome, email, password, "Administrador")
                     self.janelaPrincipal.db.add_autorizacao_login_equip(
@@ -399,7 +415,7 @@ class TempoUso(QMainWindow):
         self.tempo_hora = 0
         self.tempo_de_uso = 0
 
-#        email = self.janelaPrincipal.db_usuario.get_email(self.login)
+        # email = self.janelaPrincipal.db_usuario.get_email(self.login)
         email = self.janelaPrincipal.db.get_email_from_login(self.login)
         nome = self.janelaPrincipal.db.get_nome_from_login(self.login)
         self.lbl_usuario.setText("Em uso por: " + nome + "\n(" + email +
@@ -452,8 +468,10 @@ class TempoUso(QMainWindow):
                 self.janelaPrincipal.showNormal()
             self.janelaPrincipal.activateWindow()
 
+
         else:
             event.ignore()
+
 
 
 if __name__ == "__main__":
