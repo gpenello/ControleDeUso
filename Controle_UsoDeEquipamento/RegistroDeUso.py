@@ -14,12 +14,12 @@ from BancoDeDados_Local import BancoDeDados
 import paramikoClient
 
 
-k40_whisperer = '/home/pi/Documents/registro-de-uso-presenca-lab/K40_Whisperer-0.37_src/k40_whisperer.py'
 
 class DesignerMainWindow(QMainWindow):
 
     equipamento = 'LaserCutter'  # colocar o nome do equipamento do arquivo db
     TelaCheia = True
+    software_externo_path = '/home/pi/Documents/registro-de-uso-presenca-lab/K40_Whisperer-0.37_src/k40_whisperer.py'
     servidorFTP = False
     host, user, senha = ('raspberrypi.local', 'pi', 'lab2')
     
@@ -66,7 +66,7 @@ class DesignerMainWindow(QMainWindow):
         self.center()
         self.permitir_min = False
         self.setWindowIcon(QtGui.QIcon('./imagens/icon.png'))
-        self.k40_whisperer = subprocess.Popen(['sudo', 'python3', k40_whisperer])
+        self.software_externo = subprocess.Popen(['sudo', 'python3', software_externo_path])
 
     def baixar_db_usuarios(self):
         try:
@@ -189,7 +189,7 @@ class DesignerMainWindow(QMainWindow):
                         self.janelatempo.show()
                         self.janelatempo.activateWindow()
                         self.keep_minimized()
-                        self.abrir_k40_whisperer()
+                        self.abrir_software_externo()
 
 
                 else:
@@ -198,16 +198,16 @@ class DesignerMainWindow(QMainWindow):
                     self.janelatempo.show()
                     self.janelatempo.activateWindow()
                     self.keep_minimized()
-                    self.abrir_k40_whisperer()
+                    self.abrir_software_externo()
                     
             else:
                 QMessageBox.about(self, "Erro!", str("Senha não confere!"))
         else:
             QMessageBox.about(self, "Erro!", "Usuário não cadastrado!")
 
-    def abrir_k40_whisperer(self):
-        if self.k40_whisperer.poll() != None:
-            self.k40_whisperer = subprocess.Popen(['sudo', 'python3', k40_whisperer])
+    def abrir_software_externo(self):
+        if self.software_externo.poll() != None:
+            self.software_externo = subprocess.Popen(['sudo', 'python3', software_externo])
 
     def changeEvent(self, e):
         if e.type() == e.WindowStateChange:
