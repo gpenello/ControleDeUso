@@ -4,4 +4,19 @@ id;login;nome;equipamento;hora_inicio;hora_fim;tempo_total;comentario
 3;gpenello;;LaserCutter;2019-10-23 14:15:01;2019-10-23 14:15:20;0:0:18;
 4;gpenello;;LaserCutter;2019-10-23 18:18:32;2019-10-23 18:40:09;SAÍDA FORÇADA POR gpenello;
 5;gpenello;;LaserCutter;2019-10-23 18:40:09;2019-10-23 18:40:47;0:0:17;
-6;gpenello;;LaserCutter;2019-10-23 18:41:06;;;
+6;gpenello;;LaserCutter;2019-10-23 18:41:06;2019-10-24 08:42:47;SAÍDA FORÇADA POR gpenello;
+7;gpenello;;LaserCutter;2019-10-24 08:42:48;2019-10-24 08:48:30;0:5:42;
+8;gpenello;;LaserCutter;2019-10-24 08:47:07;2019-10-24 09:06:30;SAÍDA FORÇADA POR gpenello;
+9;gpenello;;LaserCutter;2019-10-24 09:06:30;2019-10-24 09:08:32;SAÍDA FORÇADA POR gpenello;
+10;gpenello;;LaserCutter;2019-10-24 09:08:32;2019-10-24 09:11:27;0:4:56;
+11;gpenello;;LaserCutter;2019-10-24 09:11:38;2019-10-24 09:24:26;SAÍDA FORÇADA POR gpenello;
+12;gpenello;;LaserCutter;2019-10-24 09:24:26;2019-10-24 09:30:16;0:5:50;
+13;gpenello;;LaserCutter;2019-10-24 09:30:29;2019-10-24 09:35:35;SAÍDA FORÇADA POR gpenello;
+14;gpenello;;LaserCutter;2019-10-24 09:35:35;2019-10-24 09:37:50;SAÍDA FORÇADA POR gpenello;
+15;gpenello;;LaserCutter;2019-10-24 09:37:50;2019-10-24 09:38:48;SAÍDA FORÇADA POR gpenello;
+16;gpenello;;LaserCutter;2019-10-24 09:38:49;2019-10-24 09:39:52;SAÍDA FORÇADA POR gpenello;
+17;gpenello;;LaserCutter;2019-10-24 09:39:53;2019-10-24 09:40:42;0:0:48;"sudo update-alternatives --config x-session-manager
+"
+18;gpenello;;LaserCutter;2019-10-24 09:40:05;2019-10-24 09:40:59;0:0:53;Tudo ok!
+19;gpenello;;LaserCutter;2019-10-24 09:42:20;2019-10-24 09:42:35;0:0:15;
+20;gpenello;;LaserCutter;2019-10-24 09:43:04;;;

@@ -439,8 +439,19 @@ class TempoUso(QMainWindow):
             if self.tempo_min % 60 == 0:
                 self.tempo_min = 0
                 self.tempo_hora += 1
-        self.tempo_de_uso = str(self.tempo_hora) + ':' + str(
-            self.tempo_min) + ':' + str(self.tempo_seg)
+        if self.tempo_seg < 10:
+            s = '0' + str(self.tempo_seg)
+        else:
+            s = str(self.tempo_seg)               
+        if self.tempo_min < 10:
+            m = '0' + str(self.tempo_min)
+        else:
+            m = str(self.tempo_min)
+        if self.tempo_hora < 10:
+            h = '0' + str(self.tempo_hora)
+        else:
+            h = str(self.tempo_hora)                
+        self.tempo_de_uso = h + ':' + m + ':' + s
         self.lbl_tempo.setText(self.tempo_de_uso)
         self.setWindowTitle(self.tempo_de_uso)
 
@@ -483,7 +494,7 @@ if __name__ == "__main__":
     splash.setMask(splash_pix.mask())
     splash.show()
     app.processEvents()
-    time.sleep(3)
+    time.sleep(5)
     splash.close()
     app.processEvents()
 
