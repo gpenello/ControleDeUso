@@ -19,4 +19,7 @@ id;login;nome;equipamento;hora_inicio;hora_fim;tempo_total;comentario
 "
 18;gpenello;;LaserCutter;2019-10-24 09:40:05;2019-10-24 09:40:59;0:0:53;Tudo ok!
 19;gpenello;;LaserCutter;2019-10-24 09:42:20;2019-10-24 09:42:35;0:0:15;
-20;gpenello;;LaserCutter;2019-10-24 09:43:04;;;
+20;gpenello;;LaserCutter;2019-10-24 09:43:04;2019-10-24 09:50:13;SAÍDA FORÇADA POR gpenello;
+21;gpenello;;LaserCutter;2019-10-24 09:50:13;2019-10-24 10:12:50;SAÍDA FORÇADA POR gpenello;
+22;gpenello;;LaserCutter;2019-10-24 10:12:50;2019-10-24 10:12:58;00:00:07;
+23;gpenello;;LaserCutter;2019-10-24 10:13:08;2019-10-24 10:13:14;00:00:05;

@@ -218,6 +218,7 @@ class DesignerMainWindow(QMainWindow):
                     self.showFullScreen()
                 else:
                     self.showNormal()
+                self.txt_login.setFocus()
                 self.db.export_all_db_to_csv()
                 
                 if self.servidorFTP is True:
@@ -323,6 +324,8 @@ class TelaTodosUsuarios(QMainWindow):
         else:
             self.janelaPrincipal.showNormal()
         self.janelaPrincipal.activateWindow()
+        self.janelaPrincipal.txt_login.setFocus()
+
 
 class NovoUsuario(QMainWindow):
 
@@ -505,6 +508,7 @@ if __name__ == "__main__":
     else:
         dmw.showNormal()
     dmw.activateWindow()
+    dmw.txt_login.setFocus()
 
     sys.exit(app.exec_())
 
