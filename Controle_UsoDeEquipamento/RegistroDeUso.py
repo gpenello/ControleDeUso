@@ -66,7 +66,7 @@ class DesignerMainWindow(QMainWindow):
         self.center()
         self.permitir_min = False
         self.setWindowIcon(QtGui.QIcon('./imagens/icon.png'))
-        self.software_externo = subprocess.Popen(['sudo', 'python3', software_externo_path])
+        self.software_externo = subprocess.Popen(['sudo', 'python3', self.software_externo_path])
 
     def baixar_db_usuarios(self):
         try:
@@ -207,7 +207,7 @@ class DesignerMainWindow(QMainWindow):
 
     def abrir_software_externo(self):
         if self.software_externo.poll() != None:
-            self.software_externo = subprocess.Popen(['sudo', 'python3', software_externo])
+            self.software_externo = subprocess.Popen(['sudo', 'python3', self.software_externo_path])
 
     def changeEvent(self, e):
         if e.type() == e.WindowStateChange:
