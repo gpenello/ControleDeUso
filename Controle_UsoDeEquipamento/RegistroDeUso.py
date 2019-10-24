@@ -14,7 +14,7 @@ from BancoDeDados_Local import BancoDeDados
 import paramikoClient
 
 
-k40_whisperer = '/home/germano/Documents/Faculdade/UFRJ/Programas/Python/registro-de-uso-presenca-lab/K40_Whisperer-0.37_src/k40_whisperer.py'
+k40_whisperer = '/home/pi/Documents/registro-de-uso-presenca-lab/K40_Whisperer-0.37_src/k40_whisperer.py'
 
 class DesignerMainWindow(QMainWindow):
 
