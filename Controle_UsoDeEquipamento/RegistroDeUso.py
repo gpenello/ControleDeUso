@@ -25,7 +25,7 @@ class DesignerMainWindow(QMainWindow):
     
 
     # -----------------------------------------------
-    # IMPORTANTE: FALTA INTEGRAR OS BANCOS DE DADOS LOCAIS COM O DO RPi.
+    # IMPORTANTE: FALTA INTEGRAR OS BANCOS DE DADOS LOCAIS COM O DO RPi de presença com tag RFID.
     # Eles estão diferentes!
     # -----------------------------------------------
 
@@ -39,7 +39,7 @@ class DesignerMainWindow(QMainWindow):
         super(DesignerMainWindow, self).__init__(parent)
 
         self.sair = False
-        # TEM QUE REFAZER ESTA PARTE ABAIXO PARA USAR O SERVIDOR COM PRESENÇA PELO TAG    
+        # TEM QUE REFAZER ESTA PARTE COMENTADA ABAIXO PARA USAR O SERVIDOR COM PRESENÇA PELO TAG    
         # if self.servidorFTP is True:
         #     self.baixar_db_usuarios()
         # self.db_usuario = BancoDeDados("./log/BancoDeDados_Usuarios.db")
@@ -67,6 +67,9 @@ class DesignerMainWindow(QMainWindow):
         self.permitir_min = False
         self.setWindowIcon(QtGui.QIcon('./imagens/icon.png'))
         self.k40_whisperer = subprocess.Popen(['sudo', 'python3', k40_whisperer])
+        self.txt_login.setFocus()
+        
+        
 
     def baixar_db_usuarios(self):
         try:
@@ -218,11 +221,13 @@ class DesignerMainWindow(QMainWindow):
                     self.showFullScreen()
                 else:
                     self.showNormal()
-                self.txt_login.setFocus()
                 self.db.export_all_db_to_csv()
-                
+                                
                 if self.servidorFTP is True:
                     self.enviar_db_local_FTP()
+                
+                self.txt_login.setFocus()
+                
 
     def keep_minimized(self):
         self.permitir_min = True
@@ -237,6 +242,12 @@ class DesignerMainWindow(QMainWindow):
         qr = self.frameGeometry()
         qr.moveCenter(centroTela)
         self.move(qr.topLeft())
+
+#    def eventFilter(self, obj, event):
+#        if event.type()==QtCore.QEvent.FocusOut:
+#            print(obj)
+#            print(event)
+#            print('perdeu foco')
 
     def closeEvent(self, event):
         if self.sair is False:
@@ -327,6 +338,7 @@ class TelaTodosUsuarios(QMainWindow):
         self.janelaPrincipal.txt_login.setFocus()
 
 
+
 class NovoUsuario(QMainWindow):
 
     def __init__(self, janelaPrincipal, parent=None):
@@ -400,6 +412,8 @@ class NovoUsuario(QMainWindow):
         else:
             self.janelaPrincipal.showNormal()
         self.janelaPrincipal.activateWindow()
+        self.janelaPrincipal.txt_login.setFocus()
+
 
 
 class TempoUso(QMainWindow):
@@ -481,6 +495,8 @@ class TempoUso(QMainWindow):
             else:
                 self.janelaPrincipal.showNormal()
             self.janelaPrincipal.activateWindow()
+            self.janelaPrincipal.txt_login.setFocus()
+
 
 
         else:

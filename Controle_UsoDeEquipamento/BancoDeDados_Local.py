@@ -2,9 +2,11 @@
 from sqlite3 import Error
 import datetime
 import csv
+import urllib.request as urllib2
 
 import os
 dir_path = os.path.dirname(os.path.realpath(__file__))
+
 
 
 class BancoDeDados():
@@ -12,7 +14,19 @@ class BancoDeDados():
     def __init__(self, arquivo):
 
         self.conn = self.create_connection(arquivo)
-        self.hora_inicio = str(datetime.datetime.now())[:-7]
+        if self.rpi_online():
+            self.hora_inicio = str(datetime.datetime.now())[:-7]
+        else:
+            self.hora_inicio = '[RPI OFFLINE]' + str(datetime.datetime.now())[:-7]
+
+
+    def rpi_online(self):
+        try:
+            urllib2.urlopen('http://www.google.com', timeout=1)
+            return True
+        except urllib2.URLError as err:
+            return False
+            
 
     def fechar_conn(self):
         self.conn.close()
@@ -485,7 +499,10 @@ class BancoDeDados():
                     return False, login_em_uso
 
             if self.check_autorizacao_equip(login, equipamento) is True:
-                self.hora_inicio = str(datetime.datetime.now())[:-7]
+                if self.rpi_online():
+                    self.hora_inicio = str(datetime.datetime.now())[:-7]
+                else:
+                    self.hora_inicio = '[RPI OFFLINE]' + str(datetime.datetime.now())[:-7]
                 sql = "INSERT INTO uso_equip(login, equipamento, hora_inicio) VALUES(?,?,?)"
                 cur = self.conn.cursor()
                 cur.execute(sql, (login, equipamento, self.hora_inicio))
@@ -545,7 +562,12 @@ class BancoDeDados():
                 if linha_id == []:
                     print("ERRO! " + login + ' não está usando o equipamento.')
                     return False
-                hora = str(datetime.datetime.now())[:-7]
+
+                if self.rpi_online():
+                    hora = str(datetime.datetime.now())[:-7]
+                else:
+                    hora = '[RPI OFFLINE]' + str(datetime.datetime.now())[:-7]
+
                 sql = "UPDATE uso_equip SET hora_fim = ?, tempo_total = ? WHERE id = ?"
                 cur = self.conn.cursor()
                 cur.execute(sql, (hora, tempo_total, linha_id))
@@ -557,7 +579,6 @@ class BancoDeDados():
     def force_hora_fim(self, login, equipamento):
         # funcinando por enquanto apenas para um equipamento
         try:
-            hora = str(datetime.datetime.now())[:-7]
             em_uso = self.check_equip_em_uso()
             if equipamento in [item[0] for item in em_uso]:
                 self.set_hora_fim(em_uso[0][1], em_uso[0][0],
@@ -584,7 +605,13 @@ class BancoDeDados():
                 return "Usuário não identificado!"
 
             elif check_presenca == "Não esta presente":
-                hora_entrada = str(datetime.datetime.now())[:-7]
+
+                if self.rpi_online():
+                    hora_entrada = str(datetime.datetime.now())[:-7]
+                else:
+                    hora_entrada = '[RPI OFFLINE]' + str(datetime.datetime.now())[:-7]
+
+
                 sql = "INSERT INTO presenca(login, tag, hora_entrada, " +\
                     "hora_saida) VALUES(?,?,?,?)"
                 cur = self.conn.cursor()
@@ -594,7 +621,10 @@ class BancoDeDados():
                 return "Entrada liberada! " + hora_entrada
             else:
                 linha_db = check_presenca
-                hora_saida = str(datetime.datetime.now())[:-7]
+                if self.rpi_online():
+                    hora_saida = str(datetime.datetime.now())[:-7]
+                else:
+                    hora_saida = '[RPI OFFLINE]' + str(datetime.datetime.now())[:-7]
                 sql = "UPDATE presenca SET hora_saida=? WHERE id = ?"
                 cur = self.conn.cursor()
                 cur.execute(sql, (hora_saida, linha_db))
