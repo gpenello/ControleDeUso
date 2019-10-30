@@ -8,6 +8,7 @@ import time
 import os
 import subprocess
 import signal
+from sys import platform
 
 import criptografarPassword as cript
 from BancoDeDados_Local import BancoDeDados
@@ -60,13 +61,26 @@ class DesignerMainWindow(QMainWindow):
         self.btn_novo.clicked.connect(self.cadastrarNovoUsuario)
         self.btn_usuarios.clicked.connect(self.verTodosUsuarios)
         self.btn_ok.clicked.connect(self.get_login_pass)
+        self.btn_power.clicked.connect(self.shutdown)
         if self.servidorFTP is True:
             self.btn_novo.setEnabled(False)
         # self.btn_sair.clicked.connect(self.fechar)
         self.center()
         self.permitir_min = False
         self.setWindowIcon(QtGui.QIcon('./imagens/icon.png'))
-        self.software_externo = subprocess.Popen(['sudo', 'python3', self.software_externo_path])
+        if platform == "linux" or platform == "linux2":
+            self.software_externo = subprocess.Popen(['sudo', 'python3', self.software_externo_path])
+
+    def shutdown(self):
+        reply = QMessageBox.question(self, 'Desligando...',
+                                        'Desligar o computador?', QMessageBox.Yes,
+                                        QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            if platform == "linux" or platform == "linux2":
+                subprocess.Popen(['sudo', 'shutdown', '-h', 'now'])
+            elif platform == "win32":
+                QMessageBox.about(self, "Desligando...","Este comando funciona apenas em Linux.")
+
 
     def baixar_db_usuarios(self):
         try:
@@ -207,7 +221,8 @@ class DesignerMainWindow(QMainWindow):
 
     def abrir_software_externo(self):
         if self.software_externo.poll() != None:
-            self.software_externo = subprocess.Popen(['sudo', 'python3', self.software_externo_path])
+            if platform == "linux" or platform == "linux2":
+                self.software_externo = subprocess.Popen(['sudo', 'python3', self.software_externo_path])
 
     def changeEvent(self, e):
         if e.type() == e.WindowStateChange:
