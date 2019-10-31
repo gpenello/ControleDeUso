@@ -50,6 +50,7 @@ class DesignerMainWindow(QMainWindow):
 
         self.novoUsuario = NovoUsuario(self)
         self.todosUsuarios = TelaTodosUsuarios(self)
+        self.historicoDeUso = TelaHistoricoDeUso(self)
         
         uic.loadUi('GUI/telaControle.ui', self)
         self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint |
@@ -60,6 +61,8 @@ class DesignerMainWindow(QMainWindow):
         self.txt_password.returnPressed.connect(self.get_login_pass)
         self.btn_novo.clicked.connect(self.cadastrarNovoUsuario)
         self.btn_usuarios.clicked.connect(self.verTodosUsuarios)
+        self.btn_tempo.clicked.connect(self.verHistoricoDeUso)
+
         self.btn_ok.clicked.connect(self.get_login_pass)
         self.btn_power.clicked.connect(self.shutdown)
         if self.servidorFTP is True:
@@ -125,6 +128,23 @@ class DesignerMainWindow(QMainWindow):
             )
 
         self.lbl_info.setText("")
+
+
+    def verHistoricoDeUso(self):
+
+        senha_autorizacao, ok = QInputDialog.getText(
+            self, "Aguardando autorização...", "Senha de autorização:",
+            QtWidgets.QLineEdit.Password)
+        if ok:
+            if cript.check_autorizacao(senha_autorizacao):
+                self.keep_minimized()
+                self.historicoDeUso.popular_combobox()
+                self.historicoDeUso.show()
+                self.historicoDeUso.activateWindow()
+            else:
+                QMessageBox.about(self, "Erro!",
+                                  "Senha de autorização não confere!")        
+
 
 
     def verTodosUsuarios(self):
@@ -255,11 +275,11 @@ class DesignerMainWindow(QMainWindow):
         qr.moveCenter(centroTela)
         self.move(qr.topLeft())
 
-#    def eventFilter(self, obj, event):
-#        if event.type()==QtCore.QEvent.FocusOut:
-#            print(obj)
-#            print(event)
-#            print('perdeu foco')
+    # def eventFilter(self, obj, event):
+    #     if event.type()==QtCore.QEvent.FocusOut:
+    #         print(obj)
+    #         print(event)
+    #         print('perdeu foco')
 
     def closeEvent(self, event):
         if self.sair is False:
@@ -348,6 +368,106 @@ class TelaTodosUsuarios(QMainWindow):
             self.janelaPrincipal.showNormal()
         self.janelaPrincipal.activateWindow()
         self.janelaPrincipal.txt_login.setFocus()
+
+
+
+class TelaHistoricoDeUso(QMainWindow):
+
+    def __init__(self, janelaPrincipal, parent=None):
+        super(TelaHistoricoDeUso, self).__init__(parent)
+        uic.loadUi('GUI/telaHistDeUso.ui', self)
+        self.janelaPrincipal = janelaPrincipal
+        self.popular_combobox()
+
+        self.cbx_logins.activated.connect(self.login_selecionado)
+
+
+    def popular_combobox(self):
+        self.cbx_logins.clear()
+        self.cbx_logins.addItem("Selecione o usuário:")
+        # todos_usuarios = self.janelaPrincipal.db_usuario.check_todos_usuarios_do_equip('LaserCutter')
+        todos_usuarios = self.janelaPrincipal.db.check_todos_usuarios_do_equip('LaserCutter')
+        self.cbx_logins.addItems(todos_usuarios)
+        # todos_superusuarios = self.janelaPrincipal.db_usuario.check_todos_superusuarios_do_equip('LaserCutter')
+        todos_superusuarios = self.janelaPrincipal.db.check_todos_superusuarios_do_equip('LaserCutter')
+        self.cbx_logins.addItems(todos_superusuarios)    
+
+    def login_selecionado(self, idx):
+        login = self.cbx_logins.currentText()
+        # dados = self.janelaPrincipal.db_usuario.check_usuario(login)
+        dados = self.janelaPrincipal.db.check_uso_equip(login)
+        email = self.janelaPrincipal.db.get_email_from_login(login)
+        
+        nome = dados[0][1]
+
+        self.lbl_nome.setText(nome)
+        self.lbl_email.setText(email)
+
+        if dados == []:
+            self.txt_uso.setText("Usuário ainda não usou o equipamento.")
+            return
+        
+        uso = '   Dia      -   Tempo de Uso'
+        tempo_total = '00:00:00'
+        for linha in dados:
+            uso += '\r\n'
+            dia = linha[2][-19:-9] 
+            tempo_de_uso = linha[4]
+            if tempo_de_uso is None:
+                uso += dia + ' - Equipamento ainda em uso'
+                tempo_total = tempo_total + ' + Em uso'
+            else:        
+                uso += dia + ' - ' + tempo_de_uso
+                tempo_total = self.somar_tempo(tempo_total,tempo_de_uso)
+
+        self.txt_uso.setText(uso)
+        self.lbl_tempo_total.setText(tempo_total)
+
+        
+    def somar_tempo(self, tempo1, tempo2):      
+        t1_seg = int(tempo1[-2:])
+        t1_min = int(tempo1[-5:-3])
+        t1_hora = int(tempo1[-8:-6])
+        t2_seg = int(tempo2[-2:])
+        t2_min = int(tempo2[-5:-3])
+        t2_hora = int(tempo2[-8:-6])
+
+        seg = t1_seg + t2_seg        
+        min_extra = seg/60
+        seg = int(seg%60)
+        min = t1_min + t2_min + min_extra
+        hora_extra = min/60
+        min = int(min%60)
+        hora = int(t1_hora + t2_hora + hora_extra)
+
+        if seg < 10:
+            s = '0' + str(seg)
+        else:
+            s = str(seg)               
+        if min < 10:
+            m = '0' + str(min)
+        else:
+            m = str(min)
+        if hora < 10:
+            h = '0' + str(hora)
+        else:
+            h = str(hora)      
+
+        return h + ':' + m + ':' + s
+
+    def closeEvent(self, event):
+
+        self.lbl_nome.setText("")
+
+        self.janelaPrincipal.permitir_min = False
+        if self.janelaPrincipal.TelaCheia is True:
+            self.janelaPrincipal.showFullScreen()
+        else:
+            self.janelaPrincipal.showNormal()
+        self.janelaPrincipal.activateWindow()
+        self.janelaPrincipal.txt_login.setFocus()
+
+
 
 
 

@@ -12,8 +12,15 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 class BancoDeDados():
 
     def __init__(self, arquivo):
+        
+        try:
+            os.makedirs(os.path.join(dir_path, 'log'))
+        except FileExistsError:
+            # directory already exists
+            pass
 
         self.conn = self.create_connection(arquivo)
+            
         if self.rpi_online():
             self.hora_inicio = str(datetime.datetime.now())[:-7]
         else:
@@ -403,7 +410,7 @@ class BancoDeDados():
             if rows:
                 return rows[0][0]
             else:
-                return 'Login sem nome associado'
+                return 'Login sem email associado'
         except Error as e:
             print(e)
             return False
@@ -503,9 +510,10 @@ class BancoDeDados():
                     self.hora_inicio = str(datetime.datetime.now())[:-7]
                 else:
                     self.hora_inicio = '[RPI OFFLINE]' + str(datetime.datetime.now())[:-7]
-                sql = "INSERT INTO uso_equip(login, equipamento, hora_inicio) VALUES(?,?,?)"
+                nome = self.get_nome_from_login(login)    
+                sql = "INSERT INTO uso_equip(login, nome, equipamento, hora_inicio) VALUES(?,?,?,?)"
                 cur = self.conn.cursor()
-                cur.execute(sql, (login, equipamento, self.hora_inicio))
+                cur.execute(sql, (login, nome, equipamento, self.hora_inicio))
                 self.conn.commit()
                 print('Usuário: ' + login + '\tInicio: ' + self.hora_inicio)
                 return True, "Uso liberado"
@@ -567,7 +575,7 @@ class BancoDeDados():
                     hora = str(datetime.datetime.now())[:-7]
                 else:
                     hora = '[RPI OFFLINE]' + str(datetime.datetime.now())[:-7]
-
+                
                 sql = "UPDATE uso_equip SET hora_fim = ?, tempo_total = ? WHERE id = ?"
                 cur = self.conn.cursor()
                 cur.execute(sql, (hora, tempo_total, linha_id))
@@ -611,11 +619,11 @@ class BancoDeDados():
                 else:
                     hora_entrada = '[RPI OFFLINE]' + str(datetime.datetime.now())[:-7]
 
-
-                sql = "INSERT INTO presenca(login, tag, hora_entrada, " +\
-                    "hora_saida) VALUES(?,?,?,?)"
+                nome = self.get_nome_from_login(login)
+                sql = "INSERT INTO presenca(login, nome, tag, hora_entrada, " +\
+                    "hora_saida) VALUES(?,?,?,?,?)"
                 cur = self.conn.cursor()
-                cur.execute(sql, (login, tag, hora_entrada, None))
+                cur.execute(sql, (login, nome, tag, hora_entrada, None))
                 self.conn.commit()
                 print('Usuário: ' + login + '\tEntrada: ' + hora_entrada)
                 return "Entrada liberada! " + hora_entrada
@@ -678,6 +686,17 @@ class BancoDeDados():
         except Error as e:
             print(e)
             return False
+
+    def check_uso_equip(self, login):
+        try:
+            cur = self.conn.cursor()
+            cur.execute("SELECT login, nome, hora_inicio, hora_fim, tempo_total FROM uso_equip WHERE login=?", (login, ))
+            dados = cur.fetchall()
+            if dados == []:
+                return dados
+            return dados
+        except Error as e:
+            print(e)
 
 
 if __name__ == '__main__':
