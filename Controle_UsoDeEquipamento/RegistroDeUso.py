@@ -372,8 +372,6 @@ class TelaTodosUsuarios(QMainWindow):
         self.lbl_grupo.setText(grupo)
         
         
-
-
     def closeEvent(self, event):
 
         self.lbl_tag.setText("")
@@ -404,6 +402,7 @@ class TelaHistoricoDeUso(QMainWindow):
         self.popular_combobox()
 
         self.cbx_logins.activated.connect(self.login_selecionado)
+        self.cbx_grupos.activated.connect(self.grupo_selecionado)
 
 
     def popular_combobox(self):
@@ -416,41 +415,62 @@ class TelaHistoricoDeUso(QMainWindow):
         todos_superusuarios = self.janelaPrincipal.db.check_todos_superusuarios_do_equip('LaserCutter')
         self.cbx_logins.addItems(todos_superusuarios)    
 
-    def login_selecionado(self, idx):
-        login = self.cbx_logins.currentText()
-        # dados = self.janelaPrincipal.db_usuario.check_usuario(login)
-        dados = self.janelaPrincipal.db.check_uso_equip(login)
-        email = self.janelaPrincipal.db.get_email_from_login(login)
-        grupo = self.janelaPrincipal.db.get_grupo_from_login(login)
-        
 
+        self.cbx_grupos.clear()
+        self.cbx_grupos.addItem("Selecione o grupo de pesquisa ou orientador:")
+        todos_grupos = self.janelaPrincipal.db.check_todos_grupos_do_equip()
+        self.cbx_grupos.addItems(todos_grupos)
+
+    def get_uso_login(self, login):
+        dados = self.janelaPrincipal.db.check_uso_equip(login)
         nome = dados[0][1]
 
-        self.lbl_nome.setText(nome)
-        self.lbl_email.setText(email)
-        self.lbl_grupo.setText(grupo)
-
         if dados == []:
-            self.txt_uso.setText("Usuário ainda não usou o equipamento.")
-            return
-        
-        uso = '   Dia      -   Tempo de Uso  -  Situação'
-        tempo_total = '00:00:00'
+            uso_txt = "Usuário ainda não usou o equipamento."
+            tempo_total = ""
+            return nome, uso_txt, tempo_total
+
+        uso_txt = self.txt_uso.toPlainText()
+        uso_txt += "### Usuário: " + nome + " ###\r\n"
+        uso_txt += '   Dia      -   Tempo de Uso  -  Situação'
+        tempo_total = self.lbl_tempo_total.text()
         for linha in dados:
-            uso += '\r\n'
+            uso_txt += '\r\n'
             dia = linha[2][-19:-9] 
             tempo_de_uso = linha[4]
             situacao = linha[5]
             if tempo_de_uso is None:
-                uso += dia + ' - Equipamento ainda em uso' + ' - ' + str(situacao) 
+                uso_txt += dia + ' - Equipamento ainda em uso' + ' - ' + str(situacao) 
                 tempo_total = tempo_total + ' + Em uso'
             else:        
-                uso += dia + ' - ' + tempo_de_uso + '     -     ' + str(situacao)
+                uso_txt += dia + ' - ' + tempo_de_uso + '     -     ' + str(situacao)
                 tempo_total = self.somar_tempo(tempo_total,tempo_de_uso)
+        uso_txt+='\r\n##########################\r\n\r\n'
 
 
-        self.txt_uso.setText(uso)
+        self.lbl_nome.setText(nome)
+        self.txt_uso.setText(uso_txt)
         self.lbl_tempo_total.setText(tempo_total)
+
+    def login_selecionado(self, idx):
+        self.cbx_grupos.clear()
+        self.cbx_grupos.addItem("Selecione o grupo de pesquisa ou orientador:")
+        todos_grupos = self.janelaPrincipal.db.check_todos_grupos_do_equip()
+        self.cbx_grupos.addItems(todos_grupos)
+
+        login = self.cbx_logins.currentText()
+        if login == "Selecione o usuário:":
+            return
+
+        # dados = self.janelaPrincipal.db_usuario.check_usuario(login)
+        email = self.janelaPrincipal.db.get_email_from_login(login)
+        grupo = self.janelaPrincipal.db.get_grupo_from_login(login)
+        self.lbl_email.setText(email)
+        self.lbl_grupo.setText(grupo)
+        self.txt_uso.setText("")
+        self.lbl_tempo_total.setText('00:00:00')
+        self.get_uso_login(login)
+
 
         
     def somar_tempo(self, tempo1, tempo2):      
@@ -483,6 +503,32 @@ class TelaHistoricoDeUso(QMainWindow):
             h = str(hora)      
 
         return h + ':' + m + ':' + s
+
+
+    def grupo_selecionado(self, idx):
+        self.cbx_logins.clear()
+        self.cbx_logins.addItem("Selecione o usuário:")
+        # todos_usuarios = self.janelaPrincipal.db_usuario.check_todos_usuarios_do_equip('LaserCutter')
+        todos_usuarios = self.janelaPrincipal.db.check_todos_usuarios_do_equip('LaserCutter')
+        self.cbx_logins.addItems(todos_usuarios)
+        # todos_superusuarios = self.janelaPrincipal.db_usuario.check_todos_superusuarios_do_equip('LaserCutter')
+        todos_superusuarios = self.janelaPrincipal.db.check_todos_superusuarios_do_equip('LaserCutter')
+        self.cbx_logins.addItems(todos_superusuarios)    
+
+        grupo = self.cbx_grupos.currentText()
+        if grupo == "Selecione o grupo de pesquisa ou orientador:":
+            return
+        usuarios = self.janelaPrincipal.db.check_todos_usuarios_do_grupo(grupo)
+        self.txt_uso.setText("")
+        self.lbl_tempo_total.setText('00:00:00')
+        for login in usuarios:
+            self.get_uso_login(login)
+
+        self.lbl_nome.setText('Todos os usuários do mesmo grupo ou orientador.')
+        self.lbl_email.setText("")
+        self.lbl_grupo.setText(grupo)
+
+
 
     def closeEvent(self, event):
 

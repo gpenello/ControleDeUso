@@ -500,6 +500,33 @@ class BancoDeDados():
         except Error as e:
             print(e)
 
+
+    def check_todos_grupos_do_equip(self):
+        try:
+            cur = self.conn.cursor()
+            cur.execute("SELECT DISTINCT grupo FROM usuarios")
+            rows = cur.fetchall()
+            if rows:
+                return [item[0] for item in rows]
+            return []
+        except Error as e:
+            print(e)
+
+    def check_todos_usuarios_do_grupo(self, grupo):
+        try:
+            cur = self.conn.cursor()
+            cur.execute(
+                "SELECT DISTINCT login FROM usuarios WHERE grupo=?",
+                (grupo, ))
+            rows = cur.fetchall()
+            if rows:
+                return [item[0] for item in rows]
+            return []
+        except Error as e:
+            print(e)
+
+
+
     def check_todos_superusuarios_do_equip(self, equip):
         try:
             cur = self.conn.cursor()
