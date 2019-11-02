@@ -259,9 +259,7 @@ class DesignerMainWindow(QMainWindow):
                 self.software_externo = subprocess.Popen(['sudo', 'python3', self.software_externo_path])
 
     def changeEvent(self, e):
-        print('event')
         if e.type() == e.WindowStateChange:
-            print('event window change')
             if self.permitir_min is True:
                 self.showMinimized()
             else:
@@ -312,6 +310,8 @@ class TelaTodosUsuarios(QMainWindow):
     def __init__(self, janelaPrincipal, parent=None):
         super(TelaTodosUsuarios, self).__init__(parent)
         uic.loadUi('GUI/telaTodosUsuarios.ui', self)
+        self.setWindowIcon(QtGui.QIcon('./imagens/icon.png'))
+
         self.janelaPrincipal = janelaPrincipal
         self.popular_combobox()
 
@@ -393,12 +393,13 @@ class TelaTodosUsuarios(QMainWindow):
         self.janelaPrincipal.txt_login.setFocus()
 
 
-
 class TelaHistoricoDeUso(QMainWindow):
 
     def __init__(self, janelaPrincipal, parent=None):
         super(TelaHistoricoDeUso, self).__init__(parent)
         uic.loadUi('GUI/telaHistDeUso.ui', self)
+        self.setWindowIcon(QtGui.QIcon('./imagens/icon.png'))
+
         self.janelaPrincipal = janelaPrincipal
         self.popular_combobox()
 
@@ -501,14 +502,13 @@ class TelaHistoricoDeUso(QMainWindow):
         self.janelaPrincipal.txt_login.setFocus()
 
 
-
-
-
 class NovoUsuario(QMainWindow):
 
     def __init__(self, janelaPrincipal, parent=None):
         super(NovoUsuario, self).__init__(parent)
         uic.loadUi('GUI/telaRegistrarNovo.ui', self)
+        self.setWindowIcon(QtGui.QIcon('./imagens/icon.png'))
+
         self.janelaPrincipal = janelaPrincipal
         self.txt_password.setEchoMode(QtWidgets.QLineEdit.Password)
         self.txt_password_2.setEchoMode(QtWidgets.QLineEdit.Password)
@@ -583,12 +583,12 @@ class NovoUsuario(QMainWindow):
         self.janelaPrincipal.txt_login.setFocus()
 
 
-
 class TempoUso(QMainWindow):
 
     def __init__(self, janelaPrincipal, usuario, parent=None):
         super(TempoUso, self).__init__(parent)
         uic.loadUi('GUI/telaTempoUso.ui', self)
+        self.setWindowIcon(QtGui.QIcon('./imagens/icon.png'))
         self.login = usuario
         self.janelaPrincipal = janelaPrincipal
         self.checkThreadTimer = QtCore.QTimer(self)
