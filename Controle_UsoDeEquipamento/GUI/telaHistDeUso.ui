@@ -357,6 +357,9 @@
         <property name="enabled">
          <bool>true</bool>
         </property>
+        <property name="sizeAdjustPolicy">
+         <enum>QAbstractScrollArea::AdjustToContents</enum>
+        </property>
         <property name="readOnly">
          <bool>true</bool>
         </property>
