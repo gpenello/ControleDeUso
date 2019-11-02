@@ -32,6 +32,7 @@ class BancoDeDados():
             urllib2.urlopen('http://www.google.com', timeout=1)
             return True
         except urllib2.URLError as err:
+            print(err)
             return False
             
 
@@ -99,8 +100,7 @@ class BancoDeDados():
 
     def create_csv_files(self):
         try:
-            file = open(
-                os.path.join(dir_path, 'log/tabela_uso_equip.csv'), 'r')
+            open(os.path.join(dir_path, 'log/tabela_uso_equip.csv'), 'r')
         except IOError:
             with open(
                     os.path.join(dir_path, 'log/tabela_uso_equip.csv'),
@@ -111,7 +111,7 @@ class BancoDeDados():
                     "tempo_total", "comentario"
                 ])
         try:
-            file = open(os.path.join(dir_path, 'log/tabela_presenca.csv'), 'r')
+            open(os.path.join(dir_path, 'log/tabela_presenca.csv'), 'r')
         except IOError:
             with open(os.path.join(dir_path, 'log/tabela_presenca.csv'),
                       'w+') as csv_file:
@@ -119,9 +119,7 @@ class BancoDeDados():
                 spamwriter.writerow(
                     ["id", "login","nome", "tag", "hora_entrada", "hora_saida"])
         try:
-            file = open(
-                os.path.join(dir_path, 'log/tabela_autorizacao_equip.csv'),
-                'r')
+            open(os.path.join(dir_path, 'log/tabela_autorizacao_equip.csv'),'r')
         except IOError:
             with open(
                     os.path.join(dir_path, 'log/tabela_autorizacao_equip.csv'),
@@ -129,7 +127,7 @@ class BancoDeDados():
                 spamwriter = csv.writer(csv_file, delimiter=';')
                 spamwriter.writerow(["id", "equipamento", "login", "nome", "super"])
         try:
-            file = open(os.path.join(dir_path, 'log/tabela_usuarios.csv'), 'r')
+            open(os.path.join(dir_path, 'log/tabela_usuarios.csv'), 'r')
         except IOError:
             with open(os.path.join(dir_path, 'log/tabela_usuarios.csv'),
                       'w+') as csv_file:
@@ -429,6 +427,21 @@ class BancoDeDados():
             print(e)
             return False
 
+    def get_grupo_from_login(self, login):
+        try:
+            cur = self.conn.cursor()
+            cur.execute("SELECT grupo FROM usuarios WHERE login=?", (login, ))
+            rows = cur.fetchall()
+            if rows:
+                return rows[0][0]
+            else:
+                return 'Login sem grupo associado'
+        except Error as e:
+            print(e)
+            return False
+
+
+
     def add_autorizacao_nome_equip(self, nome, equipamento, super="False"):
         try:
             sql = "INSERT INTO autorizacao_equip(nome, equipamento, super) VALUES(?,?,?)"
@@ -714,4 +727,4 @@ class BancoDeDados():
 
 
 if __name__ == '__main__':
-    db = BancoDeDados()
+    db = BancoDeDados('arquivo.db')

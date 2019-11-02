@@ -339,7 +339,7 @@ class TelaTodosUsuarios(QMainWindow):
         login = self.cbx_logins.currentText()
         # dados = self.janelaPrincipal.db_usuario.check_usuario(login)
         dados = self.janelaPrincipal.db.check_usuario(login)
-        idx, tag, login, nome, email, add_por, permissao, senha = dados
+        idx, tag, login, nome, email, add_por, permissao, senha, grupo = dados
         if tag == None:
             tag = "Tag não cadastrada."
         self.lbl_tag.setText(tag)
@@ -348,6 +348,7 @@ class TelaTodosUsuarios(QMainWindow):
         self.lbl_email.setText(email)
         self.lbl_adicionadopor.setText(add_por)
         self.lbl_permissao.setText(permissao)
+        self.lbl_grupo.setText(grupo)
         
         
 
@@ -397,11 +398,14 @@ class TelaHistoricoDeUso(QMainWindow):
         # dados = self.janelaPrincipal.db_usuario.check_usuario(login)
         dados = self.janelaPrincipal.db.check_uso_equip(login)
         email = self.janelaPrincipal.db.get_email_from_login(login)
+        grupo = self.janelaPrincipal.db.get_grupo_from_login(login)
         
+
         nome = dados[0][1]
 
         self.lbl_nome.setText(nome)
         self.lbl_email.setText(email)
+        self.lbl_grupo.setText(grupo)
 
         if dados == []:
             self.txt_uso.setText("Usuário ainda não usou o equipamento.")
