@@ -31,8 +31,7 @@ class BancoDeDados():
         try:
             urllib2.urlopen('http://www.google.com', timeout=1)
             return True
-        except urllib2.URLError as err:
-            print(err)
+        except urllib2.URLError:
             return False
             
 
@@ -72,7 +71,7 @@ class BancoDeDados():
     def create_table_uso_equip(self):
         nova_tabela = '''CREATE TABLE IF NOT EXISTS uso_equip(id INTEGER PRIMARY
             KEY, login TEXT, nome TEXT, equipamento TEXT, hora_inicio TEXT, hora_fim TEXT,
-            tempo_total TEXT, comentario TEXT)'''
+            tempo_total TEXT, comentario TEXT, situacao Text)'''
         try:
             c = self.conn.cursor()
             c.execute(nova_tabela)
@@ -590,7 +589,7 @@ class BancoDeDados():
         except Error as e:
             print(e)
 
-    def set_hora_fim(self, login, equipamento, tempo_total):
+    def set_hora_fim(self, login, equipamento, tempo_total, situacao='OK'):
         try:
             if self.check_autorizacao_equip(login, equipamento) is True:
                 linha_id = self.check_id_inicio(login, equipamento)
@@ -603,9 +602,9 @@ class BancoDeDados():
                 else:
                     hora = '[RPI OFFLINE]' + str(datetime.datetime.now())[:-7]
                 
-                sql = "UPDATE uso_equip SET hora_fim = ?, tempo_total = ? WHERE id = ?"
+                sql = "UPDATE uso_equip SET hora_fim = ?, tempo_total = ?, situacao = ? WHERE id = ?"
                 cur = self.conn.cursor()
-                cur.execute(sql, (hora, tempo_total, linha_id))
+                cur.execute(sql, (hora, tempo_total, situacao, linha_id))
                 self.conn.commit()
                 print('Usuário: ' + login + '\tFim: ' + hora)
         except Error as e:
@@ -616,16 +615,54 @@ class BancoDeDados():
         try:
             em_uso = self.check_equip_em_uso()
             if equipamento in [item[0] for item in em_uso]:
-                self.set_hora_fim(em_uso[0][1], em_uso[0][0],
-                                  "SAÍDA FORÇADA POR " + login)
+                inicio = em_uso[0][2][-8:]
+                fim_forcado = str(datetime.datetime.now())[:-7][-8:]
+                tempo_forcado = self.subtrair_tempo(fim_forcado, inicio)
+                self.set_hora_fim(em_uso[0][1], em_uso[0][0], tempo_forcado, situacao="Esqueceu logado! Saída forçada por " + login)
+                                                                     
         except Error as e:
             print(e)
+
+    def subtrair_tempo(self, tempo1, tempo2):
+        t1_seg = int(tempo1[-2:])
+        t1_min = int(tempo1[-5:-3])
+        t1_hora = int(tempo1[-8:-6])
+        t2_seg = int(tempo2[-2:])
+        t2_min = int(tempo2[-5:-3])
+        t2_hora = int(tempo2[-8:-6])
+
+        t1 = t1_seg + 60*t1_min + 60*60*t1_hora
+        t2 = t2_seg + 60*t2_min + 60*60*t2_hora
+        # if t1 < t2:
+        #     a = t1
+        #     t1 = t2
+        #     t2 = a
+        dt = t1 - t2
+        
+        dt_hora = int(dt/3600)
+        dt_min = int((dt%3600)/60)
+        dt_seg = int((dt%3600)%60)
+
+        if dt_seg < 10:
+            s = '0' + str(dt_seg)
+        else:
+            s = str(dt_seg)               
+        if dt_min < 10:
+            m = '0' + str(dt_min)
+        else:
+            m = str(dt_min)
+        if dt_hora < 10:
+            h = '0' + str(dt_hora)
+        else:
+            h = str(dt_hora)      
+
+        return h + ':' + m + ':' + s
 
     def check_equip_em_uso(self):
         try:
             cur = self.conn.cursor()
             cur.execute(
-                "SELECT DISTINCT equipamento, login FROM uso_equip WHERE hora_fim IS NULL"
+                "SELECT DISTINCT equipamento, login, hora_inicio FROM uso_equip WHERE hora_fim IS NULL"
             )
             rows = cur.fetchall()
             return rows
@@ -717,7 +754,7 @@ class BancoDeDados():
     def check_uso_equip(self, login):
         try:
             cur = self.conn.cursor()
-            cur.execute("SELECT login, nome, hora_inicio, hora_fim, tempo_total FROM uso_equip WHERE login=?", (login, ))
+            cur.execute("SELECT login, nome, hora_inicio, hora_fim, tempo_total, situacao FROM uso_equip WHERE login=?", (login, ))
             dados = cur.fetchall()
             if dados == []:
                 return dados
@@ -728,3 +765,6 @@ class BancoDeDados():
 
 if __name__ == '__main__':
     db = BancoDeDados('arquivo.db')
+
+
+# %%

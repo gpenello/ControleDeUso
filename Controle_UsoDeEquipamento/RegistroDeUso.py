@@ -14,6 +14,14 @@ import criptografarPassword as cript
 from BancoDeDados_Local import BancoDeDados
 import paramikoClient
 
+class AltTab(QtCore.QObject):
+    def eventFilter(self, obj, event):
+        if event.type() == QtCore.QEvent.KeyPress and (event.key() == 16777217 or event.key() == 16777218):
+            print('alt+tab capturado')
+            return True
+        else:
+            print('outro botao')
+            return QtCore.QObject.eventFilter(self,obj,event)    
 
 
 class DesignerMainWindow(QMainWindow):
@@ -38,6 +46,7 @@ class DesignerMainWindow(QMainWindow):
 
     def __init__(self, parent=None):
         super(DesignerMainWindow, self).__init__(parent)
+        uic.loadUi('GUI/telaControle.ui', self)
 
         self.sair = False
         # TEM QUE REFAZER ESTA PARTE COMENTADA ABAIXO PARA USAR O SERVIDOR COM PRESENÇA PELO TAG    
@@ -52,11 +61,9 @@ class DesignerMainWindow(QMainWindow):
         self.todosUsuarios = TelaTodosUsuarios(self)
         self.historicoDeUso = TelaHistoricoDeUso(self)
         
-        uic.loadUi('GUI/telaControle.ui', self)
         self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint |
                             QtCore.Qt.FramelessWindowHint)
         #        self.setWindowFlags()
-
         self.txt_password.setEchoMode(QtWidgets.QLineEdit.Password)
         self.txt_password.returnPressed.connect(self.get_login_pass)
         self.btn_novo.clicked.connect(self.cadastrarNovoUsuario)
@@ -71,6 +78,8 @@ class DesignerMainWindow(QMainWindow):
         self.center()
         self.permitir_min = False
         self.setWindowIcon(QtGui.QIcon('./imagens/icon.png'))
+        # self.installEventFilter(AltTab())
+
         if platform == "linux" or platform == "linux2":
             self.software_externo = subprocess.Popen(['sudo', 'python3', self.software_externo_path])
 
@@ -185,7 +194,9 @@ class DesignerMainWindow(QMainWindow):
         self.txt_login.setText('')
         self.txt_password.setText('')
         # dados_usuario = self.db_usuario.check_usuario(login)
+
         dados_usuario = self.db.check_usuario(login)
+
         if login == 'admin':
             if cript.check_autorizacao(password):
                 self.permitir_min = True
@@ -196,6 +207,7 @@ class DesignerMainWindow(QMainWindow):
                 QMessageBox.about(self, "Erro!",
                                   "Senha do administrador não confere!")
         elif dados_usuario != []:
+            senha = dados_usuario[7]
             if self.forcar_presenca is True:
                 # bool_presente = self.db_usuario.check_login_presenca_em_aberto(
                 #     login)
@@ -207,7 +219,7 @@ class DesignerMainWindow(QMainWindow):
                         str("Marque presença no lab. antes de utilizar os " +
                             "equipamentos!"))
                     return
-            if cript.check_password(dados_usuario[-1], password):
+            if cript.check_password(senha, password):
                 disponivel, login_usando = self.db.set_hora_inicio(
                     login, self.equipamento)
                 if not disponivel:
@@ -223,7 +235,8 @@ class DesignerMainWindow(QMainWindow):
                         self.janelatempo.show()
                         self.janelatempo.activateWindow()
                         self.keep_minimized()
-                        self.abrir_software_externo()
+                        if platform == "linux" or platform == "linux2":
+                            self.abrir_software_externo()
 
 
                 else:
@@ -232,7 +245,8 @@ class DesignerMainWindow(QMainWindow):
                     self.janelatempo.show()
                     self.janelatempo.activateWindow()
                     self.keep_minimized()
-                    self.abrir_software_externo()
+                    if platform == "linux" or platform == "linux2":
+                        self.abrir_software_externo()
                     
             else:
                 QMessageBox.about(self, "Erro!", str("Senha não confere!"))
@@ -245,7 +259,9 @@ class DesignerMainWindow(QMainWindow):
                 self.software_externo = subprocess.Popen(['sudo', 'python3', self.software_externo_path])
 
     def changeEvent(self, e):
+        print('event')
         if e.type() == e.WindowStateChange:
+            print('event window change')
             if self.permitir_min is True:
                 self.showMinimized()
             else:
@@ -258,8 +274,11 @@ class DesignerMainWindow(QMainWindow):
                 if self.servidorFTP is True:
                     self.enviar_db_local_FTP()
                 
-                self.txt_login.setFocus()
-                
+            self.activateWindow()
+        try:       
+            self.txt_login.setFocus()
+        except AttributeError:
+            pass
 
     def keep_minimized(self):
         self.permitir_min = True
@@ -275,11 +294,13 @@ class DesignerMainWindow(QMainWindow):
         qr.moveCenter(centroTela)
         self.move(qr.topLeft())
 
-    # def eventFilter(self, obj, event):
-    #     if event.type()==QtCore.QEvent.FocusOut:
-    #         print(obj)
-    #         print(event)
-    #         print('perdeu foco')
+    # def keyPressEvent(self, event):
+    #     if event.modifiers() == QtCore.Qt.AltModifier:
+    #         print('mod')    
+    #         event.ignore()
+    #         return
+
+
 
     def closeEvent(self, event):
         if self.sair is False:
@@ -361,6 +382,7 @@ class TelaTodosUsuarios(QMainWindow):
         self.lbl_email.setText("")
         self.lbl_adicionadopor.setText("")
         self.lbl_permissao.setText("")
+        self.lbl_grupo.setText("")
 
         self.janelaPrincipal.permitir_min = False
         if self.janelaPrincipal.TelaCheia is True:
@@ -411,18 +433,20 @@ class TelaHistoricoDeUso(QMainWindow):
             self.txt_uso.setText("Usuário ainda não usou o equipamento.")
             return
         
-        uso = '   Dia      -   Tempo de Uso'
+        uso = '   Dia      -   Tempo de Uso  -  Situação'
         tempo_total = '00:00:00'
         for linha in dados:
             uso += '\r\n'
             dia = linha[2][-19:-9] 
             tempo_de_uso = linha[4]
+            situacao = linha[5]
             if tempo_de_uso is None:
-                uso += dia + ' - Equipamento ainda em uso'
+                uso += dia + ' - Equipamento ainda em uso' + ' - ' + str(situacao) 
                 tempo_total = tempo_total + ' + Em uso'
             else:        
-                uso += dia + ' - ' + tempo_de_uso
+                uso += dia + ' - ' + tempo_de_uso + '     -     ' + str(situacao)
                 tempo_total = self.somar_tempo(tempo_total,tempo_de_uso)
+
 
         self.txt_uso.setText(uso)
         self.lbl_tempo_total.setText(tempo_total)
@@ -462,6 +486,11 @@ class TelaHistoricoDeUso(QMainWindow):
     def closeEvent(self, event):
 
         self.lbl_nome.setText("")
+        self.lbl_grupo.setText("")
+        self.lbl_email.setText("")
+        self.txt_uso.setText("")
+        self.lbl_tempo_total.setText("")
+
 
         self.janelaPrincipal.permitir_min = False
         if self.janelaPrincipal.TelaCheia is True:
@@ -531,6 +560,7 @@ class NovoUsuario(QMainWindow):
                     self.txt_login.setText(login)
                     self.txt_nome.setText(nome)
                     self.txt_email.setText(email)
+                    self.txt_grupo.setText(grupo)
                     self.txt_password.setText(password2)
                     self.txt_password_2.setText(password2)
 
@@ -585,6 +615,8 @@ class TempoUso(QMainWindow):
         self.janelaPrincipal.db.set_comentario(
             self.login, self.janelaPrincipal.equipamento, comentario)
         self.txt_comentario.setText("")
+        QMessageBox.about(self, "Comentário!", "Comentário inserido no banco de dados.")
+
 
     def update(self):
         self.tempo_seg += 1
