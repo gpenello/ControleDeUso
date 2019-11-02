@@ -41,7 +41,7 @@ class BancoDeDados():
     def create_table_usuarios(self):
         nova_tabela = "CREATE TABLE IF NOT EXISTS usuarios(id INTEGER PRIMARY " +\
             "KEY, tag TEXT UNIQUE, login TEXT UNIQUE, nome TEXT UNIQUE, email TEXT, adicionado_por TEXT, " +\
-            "permissao TEXT, senha TEXT)"
+            "permissao TEXT, senha TEXT, grupo TEXT)"
         try:
             c = self.conn.cursor()
             c.execute(nova_tabela)
@@ -136,7 +136,7 @@ class BancoDeDados():
                 spamwriter = csv.writer(csv_file, delimiter=';')
                 spamwriter.writerow([
                     "id", "tag", "login", "nome", "email", "adicionado_por",
-                    "permissao", "senha"
+                    "permissao", "senha", "grupo/orientador"
                 ])
 
     def check_tabela_presenca(self):
@@ -223,7 +223,7 @@ class BancoDeDados():
             spamwriter = csv.writer(csv_file, delimiter=';')
             spamwriter.writerow([
                 "id", "tag", "login", "nome", "email", "adicionado_por", "permissao",
-                "senha"
+                "senha", "grupo/orientador"
             ])
             for row in tabela_usuarios:
                 spamwriter.writerow(row)
@@ -243,12 +243,13 @@ class BancoDeDados():
                          email,
                          password,
                          tag_autorizacao,
+                         grupo,
                          permissao='apenas uso'):
         try:
-            sql = "INSERT INTO usuarios(tag, login, nome, email, senha ,adicionado_por, permissao) VALUES(?,?,?,?,?,?,?)"
+            sql = "INSERT INTO usuarios(tag, login, nome, email, senha ,adicionado_por, permissao, grupo) VALUES(?,?,?,?,?,?,?,?)"
             cur = self.conn.cursor()
             cur.execute(sql, (tag_novo, login, nome, email, password, tag_autorizacao,
-                              permissao))
+                              permissao, grupo))
             self.conn.commit()
             return True
         except Error as e:
@@ -398,6 +399,19 @@ class BancoDeDados():
                 return rows[0][0]
             else:
                 return 'Tag sem nome associado'
+        except Error as e:
+            print(e)
+            return False
+
+    def get_login_from_tag(self, tag):
+        try:
+            cur = self.conn.cursor()
+            cur.execute("SELECT login FROM usuarios WHERE tag=?", (tag, ))
+            rows = cur.fetchall()
+            if rows:
+                return rows[0][0]
+            else:
+                return 'Tag sem login associado'
         except Error as e:
             print(e)
             return False

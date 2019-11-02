@@ -488,13 +488,15 @@ class NovoUsuario(QMainWindow):
         login = self.txt_login.text()
         nome = self.txt_nome.text()
         email = self.txt_email.text()
+        grupo = self.txt_grupoPesq.text()
         password = self.txt_password.text()
         password2 = self.txt_password_2.text()
         self.txt_login.setText('')
         self.txt_nome.setText('')
         self.txt_email.setText('')
-        self.txt_password.setText('')
+        self.txt_password.setText('')   
         self.txt_password_2.setText('')
+        self.txt_grupoPesq.setText('')
 
         # dados = self.janelaPrincipal.db_usuario.check_usuario(login)
         dados = self.janelaPrincipal.db.check_usuario(login)
@@ -514,7 +516,7 @@ class NovoUsuario(QMainWindow):
                     # self.janelaPrincipal.db_usuario.add_novo_usuario(
                         # None, login, nome, email, password, "Administrador")
                     self.janelaPrincipal.db.add_novo_usuario(
-                        None, login, nome, email, password, "Administrador")
+                        None, login, nome, email, password, "Administrador", grupo)
                     self.janelaPrincipal.db.add_autorizacao_login_equip(
                         login, self.janelaPrincipal.equipamento)
                     QMessageBox.about(self, "OK!", "Cadastro realizado!")
