@@ -177,6 +177,16 @@ class BancoDeDados():
         except Error as e:
             print(e)
 
+
+    def check_tabela_usuarios_antigos(self):
+        try:
+            cur = self.conn.cursor()
+            cur.execute("SELECT * FROM usuarios_antigos")
+            rows = cur.fetchall()
+            return rows
+        except Error as e:
+            print(e)
+
 #    def check_lista_usuarios(self):
     def check_lista_nomes_usuarios(self):
         try:
