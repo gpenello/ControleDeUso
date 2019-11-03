@@ -358,6 +358,9 @@ class TelaTodosUsuarios(QMainWindow):
 
     def login_selecionado(self, idx):
         login = self.cbx_logins.currentText()
+
+        if login == "Selecione o usuário:":
+            return
         # dados = self.janelaPrincipal.db_usuario.check_usuario(login)
         dados = self.janelaPrincipal.db.check_usuario(login)
         idx, tag, login, nome, email, add_por, permissao, senha, grupo = dados
