@@ -14,15 +14,6 @@ import criptografarPassword as cript
 from BancoDeDados_Local import BancoDeDados
 import paramikoClient
 
-class AltTab(QtCore.QObject):
-    def eventFilter(self, obj, event):
-        if event.type() == QtCore.QEvent.KeyPress and (event.key() == 16777217 or event.key() == 16777218):
-            print('alt+tab capturado')
-            return True
-        else:
-            print('outro botao')
-            return QtCore.QObject.eventFilter(self,obj,event)    
-
 
 class DesignerMainWindow(QMainWindow):
 
@@ -332,7 +323,7 @@ class TelaTodosUsuarios(QMainWindow):
     def remover_usuario(self):
         
         login = self.cbx_logins.currentText()
-        print(login)
+
         if login == "Selecione o usuário:":
             QMessageBox.about(self, "Selecione usuário!", "Nenhum usuário foi selecionado.")
             self.close()
@@ -425,7 +416,7 @@ class TelaHistoricoDeUso(QMainWindow):
 
     def get_uso_login(self, login):
         dados = self.janelaPrincipal.db.check_uso_equip(login)
-        nome = dados[0][1]
+        nome = self.janelaPrincipal.db.get_nome_from_login(login)
 
         if dados == []:
             uso_txt = "Usuário ainda não usou o equipamento."
@@ -592,9 +583,9 @@ class NovoUsuario(QMainWindow):
                 QtWidgets.QLineEdit.Password)
             if ok:
                 if cript.check_autorizacao(senha_autorizacao):
-                    self.janelaPrincipal.db.remove_usuario_por_login(login)
-                    # self.janelaPrincipal.db_usuario.add_novo_usuario(
-                        # None, login, nome, email, password, "Administrador")
+                    if dados != []:
+                        self.janelaPrincipal.db.remove_usuario_para_recadastro(login)
+
                     self.janelaPrincipal.db.add_novo_usuario(
                         None, login, nome, email, password, "Administrador", grupo)
                     self.janelaPrincipal.db.add_autorizacao_equip(

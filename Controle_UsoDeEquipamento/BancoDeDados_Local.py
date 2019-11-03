@@ -148,6 +148,16 @@ class BancoDeDados():
                     "id", "tag", "login", "nome", "email", "adicionado_por",
                     "permissao", "senha", "grupo/orientador"
                 ])
+        try:
+            open(os.path.join(dir_path, 'log/tabela_usuarios_antigos.csv'), 'r')
+        except IOError:
+            with open(os.path.join(dir_path, 'log/tabela_usuarios_antigos.csv'),
+                      'w+') as csv_file:
+                spamwriter = csv.writer(csv_file, delimiter=';')
+                spamwriter.writerow([
+                    "id", "tag", "login", "nome", "email", "adicionado_por",
+                    "permissao", "senha", "grupo/orientador"
+                ])
 
     def check_tabela_presenca(self):
         try:
@@ -208,6 +218,7 @@ class BancoDeDados():
         tabela_uso_equip = self.check_tabela_uso_equip()
         tabela_autorizacao_equip = self.check_tabela_autorizacao_equip()
         tabela_usuarios = self.check_tabela_usuarios()
+        tabela_usuarios_antigos = self.check_tabela_usuarios_antigos()
         tabela_presenca = self.check_tabela_presenca()
 
         with open(os.path.join(dir_path, 'log/tabela_uso_equip.csv'),
@@ -237,6 +248,17 @@ class BancoDeDados():
             ])
             for row in tabela_usuarios:
                 spamwriter.writerow(row)
+
+        with open(os.path.join(dir_path, 'log/tabela_usuarios_antigos.csv'),
+                  'w+') as csv_file:
+            spamwriter = csv.writer(csv_file, delimiter=';')
+            spamwriter.writerow([
+                "id", "tag", "login", "nome", "email", "adicionado_por", "permissao",
+                "senha", "grupo/orientador"
+            ])
+            for row in tabela_usuarios_antigos:
+                spamwriter.writerow(row)
+
 
         with open(os.path.join(dir_path, 'log/tabela_presenca.csv'),
                   'w+') as csv_file:
@@ -286,6 +308,17 @@ class BancoDeDados():
             print(e)
             return False
 
+    def remove_usuario_para_recadastro(self, login):
+        try:
+            sql = 'DELETE FROM usuarios WHERE login=?'
+            cur = self.conn.cursor()
+            cur.execute(sql, (login, ))
+            sql = 'DELETE FROM autorizacao_equip WHERE login=?'
+            cur = self.conn.cursor()
+            cur.execute(sql, (login, ))
+            self.conn.commit()
+        except Error as e:
+            print(e)
 
 
     def remove_usuario_por_login(self, login):
