@@ -48,6 +48,18 @@ class BancoDeDados():
         except Error as e:
             print(e)
 
+
+    def create_table_usuarios_antigos(self):
+        nova_tabela = "CREATE TABLE IF NOT EXISTS usuarios_antigos(id INTEGER PRIMARY " +\
+            "KEY, tag TEXT UNIQUE, login TEXT UNIQUE, nome TEXT UNIQUE, email TEXT, adicionado_por TEXT, " +\
+            "permissao TEXT, senha TEXT, grupo TEXT)"
+        try:
+            c = self.conn.cursor()
+            c.execute(nova_tabela)
+        except Error as e:
+            print(e)
+
+
     def create_table_autorizacao_equip(self):
         nova_tabela = '''CREATE TABLE IF NOT EXISTS autorizacao_equip(id INTEGER
                 PRIMARY KEY, equipamento TEXT, login TEXT, nome TEXT, super TEXT,
@@ -84,6 +96,7 @@ class BancoDeDados():
             self.conn = sqlite3.connect(arquivo)
             if self.conn is not None:
                 self.create_table_usuarios()  # criando tabela usuarios
+                self.create_table_usuarios_antigos()  # criando tabela usuarios antigos
                 self.create_table_autorizacao_equip()  # tabela de autorizacoes
                 # criando controle de uso de equip.
                 self.create_table_uso_equip()
@@ -107,7 +120,7 @@ class BancoDeDados():
                 spamwriter = csv.writer(csv_file, delimiter=';')
                 spamwriter.writerow([
                     "id", "login", "nome", "equipamento", "hora_inicio", "hora_fim",
-                    "tempo_total", "comentario"
+                    "tempo_total", "comentário", "situação"
                 ])
         try:
             open(os.path.join(dir_path, 'log/tabela_presenca.csv'), 'r')
@@ -253,26 +266,41 @@ class BancoDeDados():
             print(e)
             return False
 
-    def remove_usuario(self, tag_ou_nome_ou_login):
+    def usuario_aposentado(self,
+                         tag_novo,
+                         login,
+                         nome,
+                         email,
+                         password,
+                         tag_autorizacao,
+                         grupo,
+                         permissao):
         try:
-            sql = 'DELETE FROM usuarios WHERE tag=?'
+            sql = "INSERT INTO usuarios_antigos(tag, login, nome, email, senha ,adicionado_por, permissao, grupo) VALUES(?,?,?,?,?,?,?,?)"
             cur = self.conn.cursor()
-            cur.execute(sql, (tag_ou_nome_ou_login, ))
-            sql = 'DELETE FROM usuarios WHERE nome=?'
-            cur = self.conn.cursor()
-            cur.execute(sql, (tag_ou_nome_ou_login, ))
+            cur.execute(sql, (tag_novo, login, nome, email, password, tag_autorizacao,
+                              permissao, grupo))
+            self.conn.commit()
+            return True
+        except Error as e:
+            print(e)
+            return False
+
+
+
+    def remove_usuario_por_login(self, login):
+                
+        dados = self.check_usuario(login)
+        idx, tag, login, nome, email, add_por, permissao, senha, grupo = dados
+        
+        try:
+            self.usuario_aposentado(tag,login,nome,email,senha,add_por,grupo,permissao)
             sql = 'DELETE FROM usuarios WHERE login=?'
             cur = self.conn.cursor()
-            cur.execute(sql, (tag_ou_nome_ou_login, ))
+            cur.execute(sql, (login, ))
             sql = 'DELETE FROM autorizacao_equip WHERE login=?'
             cur = self.conn.cursor()
-            cur.execute(sql, (tag_ou_nome_ou_login, ))
-            sql = 'DELETE FROM autorizacao_equip WHERE tag=?'
-            cur = self.conn.cursor()
-            cur.execute(sql, (tag_ou_nome_ou_login, ))
-            sql = 'DELETE FROM autorizacao_equip WHERE nome=?'
-            cur = self.conn.cursor()
-            cur.execute(sql, (tag_ou_nome_ou_login, ))
+            cur.execute(sql, (login, ))
             self.conn.commit()
         except Error as e:
             print(e)
@@ -440,6 +468,18 @@ class BancoDeDados():
             return False
 
 
+
+    def add_autorizacao_equip(self, login, nome, equipamento, super="False"):
+        try:
+            sql = "INSERT INTO autorizacao_equip(login, nome, equipamento, super) VALUES(?,?,?,?)"
+            cur = self.conn.cursor()
+            cur.execute(sql, (login, nome, equipamento, super))
+            self.conn.commit()
+            print('adicionado na linha ' + str(cur.lastrowid))
+            return True
+        except Error as e:
+            print(e)
+            return False
 
     def add_autorizacao_nome_equip(self, nome, equipamento, super="False"):
         try:
@@ -660,10 +700,7 @@ class BancoDeDados():
 
         t1 = t1_seg + 60*t1_min + 60*60*t1_hora
         t2 = t2_seg + 60*t2_min + 60*60*t2_hora
-        # if t1 < t2:
-        #     a = t1
-        #     t1 = t2
-        #     t2 = a
+
         dt = t1 - t2
         
         dt_hora = int(dt/3600)

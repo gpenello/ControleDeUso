@@ -344,8 +344,7 @@ class TelaTodosUsuarios(QMainWindow):
 
         if ok:
             if cript.check_autorizacao(senha_autorizacao):
-                    # self.janelaPrincipal.db_usuario.remove_usuario(login)
-                self.janelaPrincipal.db.remove_usuario(login)
+                self.janelaPrincipal.db.remove_usuario_por_login(login)
                 QMessageBox.about(self, "OK!", login + " removido do banco de dados!")
             else:
                 QMessageBox.about(self, "Erro!",
@@ -593,14 +592,13 @@ class NovoUsuario(QMainWindow):
                 QtWidgets.QLineEdit.Password)
             if ok:
                 if cript.check_autorizacao(senha_autorizacao):
-                    # self.janelaPrincipal.db_usuario.remove_usuario(login)
-                    self.janelaPrincipal.db.remove_usuario(login)
+                    self.janelaPrincipal.db.remove_usuario_por_login(login)
                     # self.janelaPrincipal.db_usuario.add_novo_usuario(
                         # None, login, nome, email, password, "Administrador")
                     self.janelaPrincipal.db.add_novo_usuario(
                         None, login, nome, email, password, "Administrador", grupo)
-                    self.janelaPrincipal.db.add_autorizacao_login_equip(
-                        login, self.janelaPrincipal.equipamento)
+                    self.janelaPrincipal.db.add_autorizacao_equip(
+                        login, nome, self.janelaPrincipal.equipamento)
                     QMessageBox.about(self, "OK!", "Cadastro realizado!")
 
                 else:
