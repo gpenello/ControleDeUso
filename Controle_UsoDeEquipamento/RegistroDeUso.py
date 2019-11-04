@@ -433,11 +433,15 @@ class TelaHistoricoDeUso(QMainWindow):
             dia = linha[2][-19:-9] 
             tempo_de_uso = linha[4]
             situacao = linha[5]
+            comentario = linha[6]
+            if comentario is None:
+                comentario = "Nenhum comentário registrado neste dia."
+
             if tempo_de_uso is None:
-                uso_txt += dia + ' - Equipamento ainda em uso' + ' - ' + str(situacao) 
+                uso_txt += '-> ' + dia + ' - Equipamento ainda em uso' + ' - ' + str(situacao) + '\r\n' +   "Comentário: " + str(comentario) + '\r\n'
                 tempo_total = tempo_total + ' + Em uso'
             else:        
-                uso_txt += dia + ' - ' + tempo_de_uso + '     -     ' + str(situacao)
+                uso_txt += '-> ' + dia + ' - ' + tempo_de_uso + '     -     ' + str(situacao) + '\r\n' +   "Comentário: " + str(comentario) + '\r\n'
                 tempo_total = self.somar_tempo(tempo_total,tempo_de_uso)
         uso_txt+='\r\n##########################\r\n\r\n'
 
@@ -458,11 +462,14 @@ class TelaHistoricoDeUso(QMainWindow):
             dia = linha[2][-19:-9] 
             tempo_de_uso = linha[4]
             situacao = linha[5]
+            comentario = linha[6]
+            if comentario is None:
+                comentario = "Nenhum comentário registrado neste dia."
             if tempo_de_uso is None:
-                uso_txt += nome + ' - ' + dia + ' - Equipamento ainda em uso' + ' - ' + str(situacao) 
+                uso_txt += '-> ' + nome + ' - ' + dia + ' - Equipamento ainda em uso' + ' - ' + str(situacao) + '\r\n' +   "Comentário: " + str(comentario) + '\r\n'
                 tempo_total = tempo_total + ' + Em uso'
             else:        
-                uso_txt += nome + ' - ' + dia + ' - ' + tempo_de_uso + '     -     ' + str(situacao)
+                uso_txt += '-> ' + nome + ' - ' + dia + ' - ' + tempo_de_uso + '     -     ' + str(situacao) + '\r\n' +   "Comentário: " + str(comentario) + '\r\n'
                 tempo_total = self.somar_tempo(tempo_total,tempo_de_uso)
 
 
@@ -484,7 +491,7 @@ class TelaHistoricoDeUso(QMainWindow):
             return
         elif login == "Todos os usuarios":
             linhas = self.janelaPrincipal.db.todas_linhas_de_uso(self.janelaPrincipal.equipamento)
-            self.txt_uso.setText("Usuario - Dia - Tempo - Situacao")
+            self.txt_uso.setText("Usuario - Dia - Tempo - Situacao - Comentário")
             for linha in linhas:
                 self.get_uso_id(linha[0])
                 self.lbl_email.setText("Todos os usuarios.")

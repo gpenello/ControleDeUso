@@ -236,7 +236,7 @@ class BancoDeDados():
             spamwriter = csv.writer(csv_file, delimiter=';')
             spamwriter.writerow([
                 "id", "login", "nome", "equipamento", "hora_inicio", "hora_fim",
-                "tempo_total", "comentario"
+                "tempo_total", "comentario", "situacao"
             ])
             for row in tabela_uso_equip:
                 spamwriter.writerow(row)
@@ -742,7 +742,7 @@ class BancoDeDados():
         except Error as e:
             print(e)
 
-    def set_hora_fim_seguranca(self, login, equipamento, tempo_total, situacao='Registro de segurança de 1 min'):
+    def set_hora_fim_seguranca(self, login, equipamento, tempo_total, situacao='Erro! Registro de segurança ativado.'):
         try:
             id = self.ultima_linha_registrada(login, equipamento)
             if self.rpi_online():
@@ -886,7 +886,7 @@ class BancoDeDados():
     def check_uso_equip(self, login):
         try:
             cur = self.conn.cursor()
-            cur.execute("SELECT login, nome, hora_inicio, hora_fim, tempo_total, situacao FROM uso_equip WHERE login=?", (login, ))
+            cur.execute("SELECT login, nome, hora_inicio, hora_fim, tempo_total, situacao, comentario FROM uso_equip WHERE login=?", (login, ))
             dados = cur.fetchall()
             if dados == []:
                 return dados
@@ -920,7 +920,7 @@ class BancoDeDados():
     def check_uso_equip_id(self, id):
         try:
             cur = self.conn.cursor()
-            cur.execute("SELECT login, nome, hora_inicio, hora_fim, tempo_total, situacao FROM uso_equip WHERE id=?", (id, ))
+            cur.execute("SELECT login, nome, hora_inicio, hora_fim, tempo_total, situacao, comentario FROM uso_equip WHERE id=?", (id, ))
             dados = cur.fetchall()
             if dados == []:
                 return dados
