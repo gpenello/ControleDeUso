@@ -608,8 +608,6 @@ class BancoDeDados():
         except Error as e:
             print(e)
 
-
-
     def check_todos_superusuarios_do_equip(self, equip):
         try:
             cur = self.conn.cursor()
@@ -896,6 +894,39 @@ class BancoDeDados():
         except Error as e:
             print(e)
 
+    def todas_linhas_de_uso(self, equipamento):
+        try:
+            cur = self.conn.cursor()
+            cur.execute("SELECT id FROM uso_equip WHERE equipamento=?",(equipamento,))
+            row = cur.fetchall()
+            return row
+        except Error as e:
+            print(e)
+
+
+    def get_nome_from_id(self, id):
+        try:
+            cur = self.conn.cursor()
+            cur.execute("SELECT nome FROM uso_equip WHERE id=?", (id, ))
+            rows = cur.fetchall()
+            if rows:
+                return rows[0][0]
+            else:
+                return 'Login sem nome associado'
+        except Error as e:
+            print(e)
+            return False
+
+    def check_uso_equip_id(self, id):
+        try:
+            cur = self.conn.cursor()
+            cur.execute("SELECT login, nome, hora_inicio, hora_fim, tempo_total, situacao FROM uso_equip WHERE id=?", (id, ))
+            dados = cur.fetchall()
+            if dados == []:
+                return dados
+            return dados
+        except Error as e:
+            print(e)
 
 if __name__ == '__main__':
     db = BancoDeDados('arquivo.db')

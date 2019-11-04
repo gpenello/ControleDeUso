@@ -401,6 +401,7 @@ class TelaHistoricoDeUso(QMainWindow):
     def popular_combobox(self):
         self.cbx_logins.clear()
         self.cbx_logins.addItem("Selecione o usuário:")
+        self.cbx_logins.addItem("Todos os usuarios")
         # todos_usuarios = self.janelaPrincipal.db_usuario.check_todos_usuarios_do_equip('LaserCutter')
         todos_usuarios = self.janelaPrincipal.db.check_todos_usuarios_do_equip('LaserCutter')
         self.cbx_logins.addItems(todos_usuarios)
@@ -445,23 +446,55 @@ class TelaHistoricoDeUso(QMainWindow):
         self.txt_uso.setText(uso_txt)
         self.lbl_tempo_total.setText(tempo_total)
 
+
+    def get_uso_id(self, id):
+        dados = self.janelaPrincipal.db.check_uso_equip_id(id)
+        nome = self.janelaPrincipal.db.get_nome_from_id(id)
+
+        uso_txt = self.txt_uso.toPlainText()
+        tempo_total = self.lbl_tempo_total.text()
+        for linha in dados:
+            uso_txt += '\r\n'
+            dia = linha[2][-19:-9] 
+            tempo_de_uso = linha[4]
+            situacao = linha[5]
+            if tempo_de_uso is None:
+                uso_txt += nome + ' - ' + dia + ' - Equipamento ainda em uso' + ' - ' + str(situacao) 
+                tempo_total = tempo_total + ' + Em uso'
+            else:        
+                uso_txt += nome + ' - ' + dia + ' - ' + tempo_de_uso + '     -     ' + str(situacao)
+                tempo_total = self.somar_tempo(tempo_total,tempo_de_uso)
+
+
+        self.lbl_nome.setText(nome)
+        self.txt_uso.setText(uso_txt)
+        self.lbl_tempo_total.setText(tempo_total)
+
     def login_selecionado(self, idx):
         self.cbx_grupos.clear()
         self.cbx_grupos.addItem("Selecione o grupo de pesquisa ou orientador:")
         todos_grupos = self.janelaPrincipal.db.check_todos_grupos_do_equip()
         self.cbx_grupos.addItems(todos_grupos)
+        
+        self.txt_uso.setText("")
+        self.lbl_tempo_total.setText('00:00:00')
 
         login = self.cbx_logins.currentText()
         if login == "Selecione o usuário:":
             return
-
+        elif login == "Todos os usuarios":
+            linhas = self.janelaPrincipal.db.todas_linhas_de_uso(self.janelaPrincipal.equipamento)
+            self.txt_uso.setText("Usuario - Dia - Tempo - Situacao")
+            for linha in linhas:
+                self.get_uso_id(linha[0])
+                self.lbl_email.setText("Todos os usuarios.")
+                self.lbl_grupo.setText("Todos os usuarios.")
+            return
         # dados = self.janelaPrincipal.db_usuario.check_usuario(login)
         email = self.janelaPrincipal.db.get_email_from_login(login)
         grupo = self.janelaPrincipal.db.get_grupo_from_login(login)
         self.lbl_email.setText(email)
         self.lbl_grupo.setText(grupo)
-        self.txt_uso.setText("")
-        self.lbl_tempo_total.setText('00:00:00')
         self.get_uso_login(login)
 
 
@@ -501,6 +534,7 @@ class TelaHistoricoDeUso(QMainWindow):
     def grupo_selecionado(self, idx):
         self.cbx_logins.clear()
         self.cbx_logins.addItem("Selecione o usuário:")
+        self.cbx_logins.addItem("Todos os usuarios")
         # todos_usuarios = self.janelaPrincipal.db_usuario.check_todos_usuarios_do_equip('LaserCutter')
         todos_usuarios = self.janelaPrincipal.db.check_todos_usuarios_do_equip('LaserCutter')
         self.cbx_logins.addItems(todos_usuarios)
