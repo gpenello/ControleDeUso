@@ -14,6 +14,10 @@ import criptografarPassword as cript
 from BancoDeDados_Local import BancoDeDados
 import paramikoClient
 
+dir_path = os.path.dirname(os.path.realpath(__file__))
+GUI_path = os.path.join(dir_path, 'GUI')
+img_path = os.path.join(dir_path, 'imagens')
+log_path = os.path.join(dir_path, 'log')
 
 class DesignerMainWindow(QMainWindow):
 
@@ -37,15 +41,13 @@ class DesignerMainWindow(QMainWindow):
 
     def __init__(self, parent=None):
         super(DesignerMainWindow, self).__init__(parent)
-        uic.loadUi('GUI/telaControle.ui', self)
-
+        uic.loadUi(os.path.join(GUI_path, 'telaControle.ui'), self)
         self.sair = False
         # TEM QUE REFAZER ESTA PARTE COMENTADA ABAIXO PARA USAR O SERVIDOR COM PRESENÇA PELO TAG    
         # if self.servidorFTP is True:
         #     self.baixar_db_usuarios()
         # self.db_usuario = BancoDeDados("./log/BancoDeDados_Usuarios.db")
-
-        arquivo = "./log/BancoDeDados_Local_" + self.equipamento + ".db"
+        arquivo = os.path.join(log_path, "BancoDeDados_Local_" + self.equipamento + ".db")
         self.db = BancoDeDados(arquivo)
 
         self.novoUsuario = NovoUsuario(self)
@@ -68,7 +70,7 @@ class DesignerMainWindow(QMainWindow):
         # self.btn_sair.clicked.connect(self.fechar)
         self.center()
         self.permitir_min = False
-        self.setWindowIcon(QtGui.QIcon('./imagens/icon.png'))
+        self.setWindowIcon(QtGui.QIcon(os.path.join(img_path, "icon.png")))
         # self.installEventFilter(AltTab())
 
         if platform == "linux" or platform == "linux2":
@@ -300,8 +302,8 @@ class TelaTodosUsuarios(QMainWindow):
 
     def __init__(self, janelaPrincipal, parent=None):
         super(TelaTodosUsuarios, self).__init__(parent)
-        uic.loadUi('GUI/telaTodosUsuarios.ui', self)
-        self.setWindowIcon(QtGui.QIcon('./imagens/icon.png'))
+        uic.loadUi(os.path.join(GUI_path, 'telaTodosUsuarios.ui'), self)
+        self.setWindowIcon(QtGui.QIcon(os.path.join(img_path, "icon.png")))
 
         self.janelaPrincipal = janelaPrincipal
         self.popular_combobox()
@@ -312,11 +314,9 @@ class TelaTodosUsuarios(QMainWindow):
     def popular_combobox(self):
         self.cbx_logins.clear()
         self.cbx_logins.addItem("Selecione o usuário:")
-        # todos_usuarios = self.janelaPrincipal.db_usuario.check_todos_usuarios_do_equip('LaserCutter')
-        todos_usuarios = self.janelaPrincipal.db.check_todos_usuarios_do_equip('LaserCutter')
+        todos_usuarios = self.janelaPrincipal.db.check_todos_usuarios_do_equip(self.janelaPrincipal.equipamento)
         self.cbx_logins.addItems(todos_usuarios)
-        # todos_superusuarios = self.janelaPrincipal.db_usuario.check_todos_superusuarios_do_equip('LaserCutter')
-        todos_superusuarios = self.janelaPrincipal.db.check_todos_superusuarios_do_equip('LaserCutter')
+        todos_superusuarios = self.janelaPrincipal.db.check_todos_superusuarios_do_equip('self.janelaPrincipal.equipamento')
         self.cbx_logins.addItems(todos_superusuarios)
 
 
@@ -388,8 +388,8 @@ class TelaHistoricoDeUso(QMainWindow):
 
     def __init__(self, janelaPrincipal, parent=None):
         super(TelaHistoricoDeUso, self).__init__(parent)
-        uic.loadUi('GUI/telaHistDeUso.ui', self)
-        self.setWindowIcon(QtGui.QIcon('./imagens/icon.png'))
+        uic.loadUi(os.path.join(GUI_path, 'telaHistDeUso.ui'), self)
+        self.setWindowIcon(QtGui.QIcon(os.path.join(img_path, "icon.png")))
 
         self.janelaPrincipal = janelaPrincipal
         self.popular_combobox()
@@ -402,11 +402,9 @@ class TelaHistoricoDeUso(QMainWindow):
         self.cbx_logins.clear()
         self.cbx_logins.addItem("Selecione o usuário:")
         self.cbx_logins.addItem("Todos os usuarios")
-        # todos_usuarios = self.janelaPrincipal.db_usuario.check_todos_usuarios_do_equip('LaserCutter')
-        todos_usuarios = self.janelaPrincipal.db.check_todos_usuarios_do_equip('LaserCutter')
+        todos_usuarios = self.janelaPrincipal.db.check_todos_usuarios_do_equip(self.janelaPrincipal.equipamento)
         self.cbx_logins.addItems(todos_usuarios)
-        # todos_superusuarios = self.janelaPrincipal.db_usuario.check_todos_superusuarios_do_equip('LaserCutter')
-        todos_superusuarios = self.janelaPrincipal.db.check_todos_superusuarios_do_equip('LaserCutter')
+        todos_superusuarios = self.janelaPrincipal.db.check_todos_superusuarios_do_equip(self.janelaPrincipal.equipamento)
         self.cbx_logins.addItems(todos_superusuarios)    
 
 
@@ -542,11 +540,9 @@ class TelaHistoricoDeUso(QMainWindow):
         self.cbx_logins.clear()
         self.cbx_logins.addItem("Selecione o usuário:")
         self.cbx_logins.addItem("Todos os usuarios")
-        # todos_usuarios = self.janelaPrincipal.db_usuario.check_todos_usuarios_do_equip('LaserCutter')
-        todos_usuarios = self.janelaPrincipal.db.check_todos_usuarios_do_equip('LaserCutter')
+        todos_usuarios = self.janelaPrincipal.db.check_todos_usuarios_do_equip(self.janelaPrincipal.equipamento)
         self.cbx_logins.addItems(todos_usuarios)
-        # todos_superusuarios = self.janelaPrincipal.db_usuario.check_todos_superusuarios_do_equip('LaserCutter')
-        todos_superusuarios = self.janelaPrincipal.db.check_todos_superusuarios_do_equip('LaserCutter')
+        todos_superusuarios = self.janelaPrincipal.db.check_todos_superusuarios_do_equip(self.janelaPrincipal.equipamento)
         self.cbx_logins.addItems(todos_superusuarios)    
 
         grupo = self.cbx_grupos.currentText()
@@ -586,8 +582,8 @@ class NovoUsuario(QMainWindow):
 
     def __init__(self, janelaPrincipal, parent=None):
         super(NovoUsuario, self).__init__(parent)
-        uic.loadUi('GUI/telaRegistrarNovo.ui', self)
-        self.setWindowIcon(QtGui.QIcon('./imagens/icon.png'))
+        uic.loadUi(os.path.join(GUI_path, 'telaRegistrarNovo.ui'), self)
+        self.setWindowIcon(QtGui.QIcon(os.path.join(img_path, "icon.png")))
 
         self.janelaPrincipal = janelaPrincipal
         self.txt_password.setEchoMode(QtWidgets.QLineEdit.Password)
@@ -595,7 +591,6 @@ class NovoUsuario(QMainWindow):
         self.txt_password_2.returnPressed.connect(self.get_login_pass)
         self.btn_sair.clicked.connect(self.close)
         self.btn_ok.clicked.connect(self.get_login_pass)
-        self.setWindowIcon(QtGui.QIcon('./imagens/icon.png'))
 
     def get_login_pass(self):
         login = self.txt_login.text()
@@ -666,8 +661,8 @@ class TempoUso(QMainWindow):
 
     def __init__(self, janelaPrincipal, usuario, parent=None):
         super(TempoUso, self).__init__(parent)
-        uic.loadUi('GUI/telaTempoUso.ui', self)
-        self.setWindowIcon(QtGui.QIcon('./imagens/icon.png'))
+        uic.loadUi(os.path.join(GUI_path, 'telaTempoUso.ui'), self)
+        self.setWindowIcon(QtGui.QIcon(os.path.join(img_path, "icon.png")))
         self.login = usuario
         self.janelaPrincipal = janelaPrincipal
         self.checkThreadTimer = QtCore.QTimer(self)
@@ -687,7 +682,6 @@ class TempoUso(QMainWindow):
 
         self.btn_sair.clicked.connect(self.close)
         self.btn_comentario.clicked.connect(self.comentar)
-        self.setWindowIcon(QtGui.QIcon('./imagens/icon.png'))
 
     def comentar(self):
         comentario = self.txt_comentario.toPlainText()
@@ -762,7 +756,7 @@ if __name__ == "__main__":
 
     app = QApplication(sys.argv)
 
-    splash_pix = QtGui.QPixmap('./imagens/splashscreen.png')
+    splash_pix = QtGui.QPixmap(os.path.join(img_path, "splashscreen.png"))
     splash = QSplashScreen(splash_pix, QtCore.Qt.WindowStaysOnTopHint)
     splash.setMask(splash_pix.mask())
     splash.show()
