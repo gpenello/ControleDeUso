@@ -702,7 +702,9 @@ class BancoDeDados():
     def set_hora_fim(self, login, equipamento, tempo_total, situacao='OK'):
         try:
             if self.check_autorizacao_equip(login, equipamento) is True:
-                linha_id = self.check_id_inicio(login, equipamento)
+                # linha_id = self.check_id_inicio(login, equipamento)
+                linha_id = self.ultima_linha_registrada(login, equipamento)
+
                 if linha_id == []:
                     print("ERRO! " + login + ' não está usando o equipamento.')
                     return False
@@ -732,6 +734,31 @@ class BancoDeDados():
                                                                      
         except Error as e:
             print(e)
+
+    def ultima_linha_registrada(self, login, equipamento):
+        try:
+            cur = self.conn.cursor()
+            cur.execute("SELECT id FROM uso_equip WHERE login = ? and equipamento = ?",(login, equipamento))
+            row = cur.fetchall()
+            return row[-1][0]
+        except Error as e:
+            print(e)
+
+    def set_hora_fim_seguranca(self, login, equipamento, tempo_total, situacao='Registro de segurança de 1 min'):
+        try:
+            id = self.ultima_linha_registrada(login, equipamento)
+            if self.rpi_online():
+                hora = str(datetime.datetime.now())[:-7]
+            else:
+                hora = '[RPI OFFLINE]' + str(datetime.datetime.now())[:-7]            
+            sql = "UPDATE uso_equip SET hora_fim = ?, tempo_total = ?, situacao = ? WHERE id = ?"
+            cur = self.conn.cursor()
+            cur.execute(sql, (hora, tempo_total, situacao, id))
+            self.conn.commit()
+        except Error as e:
+            print(e)
+
+
 
     def subtrair_tempo(self, tempo1, tempo2):
         t1_seg = int(tempo1[-2:])

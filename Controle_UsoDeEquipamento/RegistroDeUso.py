@@ -679,6 +679,11 @@ class TempoUso(QMainWindow):
         self.tempo_de_uso = h + ':' + m + ':' + s
         self.lbl_tempo.setText(self.tempo_de_uso)
         self.setWindowTitle(self.tempo_de_uso)
+        if self.tempo_seg % 60 == 0:
+            if self.janelaPrincipal.servidorFTP is True:
+                self.janelaPrincipal.lbl_info.setText("Salvando no servidor FTP...")
+            self.janelaPrincipal.db.set_hora_fim_seguranca(
+                self.login, self.janelaPrincipal.equipamento, self.tempo_de_uso)
 
     def closeEvent(self, event):
         texto = "Finalizar o uso do equipamento?"
