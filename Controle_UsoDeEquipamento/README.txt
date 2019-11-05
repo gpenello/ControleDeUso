@@ -1,12 +1,19 @@
-Passo a passo para que o programa seja inicializado automaticamente:
+Passo a passo para que o programa seja inicializado automaticamente (dois jeitos):
 
-    Criar um arquivo de atalho do RegistroDeUso.pyw
+Jeito 1)  - Criar um arquivo de atalho do RegistroDeUso.py
+    	  - Associar o python.exe para abrir as extensões .py
+	    - Ex.: Executável em "C:\Users\gpenello\Miniconda3\python.exe"
+          - Copiar o atalho gerado anteriormente (ex. "RegistroDeUso.pyw - Shortcut") para a pasta de Startup
+	  - Pasta geral do Windows: "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\"
 
-    Associar o pythonw.exe para abrir as extensões .pyw
-	- Ex.: Executável em "C:\Users\gpenello\Miniconda3\pythonw.exe"
+Jeito 2)  - Criar um arquivo RunRegistroDeUso.bat com o conteúdo:
 
-    Copiar o atalho gerado anteriormente (ex. "RegistroDeUso.pyw - Shortcut") para a pasta de Startup
-	- Pasta geral do Windows: "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\"
+"C:\Users\gpenello\Miniconda3\python.exe" "D:\OneDrive - IF-UFRJ\UFRJ\Programas\Python\registro-de-uso-presenca-lab\Controle_UsoDeEquipamento\RegistroDeUso.py"
+pause
+          
+          - Copiar o arquivo .bat gerado anteriormente para a pasta de Startup
+	  - Pasta geral do Windows: "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\"
+
 
 
 Para alterar a senha do administrador, rodar o arquivo "criptografarPassword.py".

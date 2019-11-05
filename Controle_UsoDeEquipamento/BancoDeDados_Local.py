@@ -31,7 +31,7 @@ class BancoDeDados():
         try:
             urllib2.urlopen('http://www.google.com', timeout=1)
             return True
-        except urllib2.URLError as err:
+        except urllib2.URLError:
             return False
             
 
@@ -41,12 +41,24 @@ class BancoDeDados():
     def create_table_usuarios(self):
         nova_tabela = "CREATE TABLE IF NOT EXISTS usuarios(id INTEGER PRIMARY " +\
             "KEY, tag TEXT UNIQUE, login TEXT UNIQUE, nome TEXT UNIQUE, email TEXT, adicionado_por TEXT, " +\
-            "permissao TEXT, senha TEXT)"
+            "permissao TEXT, senha TEXT, grupo TEXT)"
         try:
             c = self.conn.cursor()
             c.execute(nova_tabela)
         except Error as e:
             print(e)
+
+
+    def create_table_usuarios_antigos(self):
+        nova_tabela = "CREATE TABLE IF NOT EXISTS usuarios_antigos(id INTEGER PRIMARY " +\
+            "KEY, tag TEXT UNIQUE, login TEXT UNIQUE, nome TEXT UNIQUE, email TEXT, adicionado_por TEXT, " +\
+            "permissao TEXT, senha TEXT, grupo TEXT)"
+        try:
+            c = self.conn.cursor()
+            c.execute(nova_tabela)
+        except Error as e:
+            print(e)
+
 
     def create_table_autorizacao_equip(self):
         nova_tabela = '''CREATE TABLE IF NOT EXISTS autorizacao_equip(id INTEGER
@@ -71,7 +83,7 @@ class BancoDeDados():
     def create_table_uso_equip(self):
         nova_tabela = '''CREATE TABLE IF NOT EXISTS uso_equip(id INTEGER PRIMARY
             KEY, login TEXT, nome TEXT, equipamento TEXT, hora_inicio TEXT, hora_fim TEXT,
-            tempo_total TEXT, comentario TEXT)'''
+            tempo_total TEXT, comentario TEXT, situacao Text)'''
         try:
             c = self.conn.cursor()
             c.execute(nova_tabela)
@@ -84,6 +96,7 @@ class BancoDeDados():
             self.conn = sqlite3.connect(arquivo)
             if self.conn is not None:
                 self.create_table_usuarios()  # criando tabela usuarios
+                self.create_table_usuarios_antigos()  # criando tabela usuarios antigos
                 self.create_table_autorizacao_equip()  # tabela de autorizacoes
                 # criando controle de uso de equip.
                 self.create_table_uso_equip()
@@ -99,8 +112,7 @@ class BancoDeDados():
 
     def create_csv_files(self):
         try:
-            file = open(
-                os.path.join(dir_path, 'log/tabela_uso_equip.csv'), 'r')
+            open(os.path.join(dir_path, 'log/tabela_uso_equip.csv'), 'r')
         except IOError:
             with open(
                     os.path.join(dir_path, 'log/tabela_uso_equip.csv'),
@@ -108,10 +120,10 @@ class BancoDeDados():
                 spamwriter = csv.writer(csv_file, delimiter=';')
                 spamwriter.writerow([
                     "id", "login", "nome", "equipamento", "hora_inicio", "hora_fim",
-                    "tempo_total", "comentario"
+                    "tempo_total", "comentário", "situação"
                 ])
         try:
-            file = open(os.path.join(dir_path, 'log/tabela_presenca.csv'), 'r')
+            open(os.path.join(dir_path, 'log/tabela_presenca.csv'), 'r')
         except IOError:
             with open(os.path.join(dir_path, 'log/tabela_presenca.csv'),
                       'w+') as csv_file:
@@ -119,9 +131,7 @@ class BancoDeDados():
                 spamwriter.writerow(
                     ["id", "login","nome", "tag", "hora_entrada", "hora_saida"])
         try:
-            file = open(
-                os.path.join(dir_path, 'log/tabela_autorizacao_equip.csv'),
-                'r')
+            open(os.path.join(dir_path, 'log/tabela_autorizacao_equip.csv'),'r')
         except IOError:
             with open(
                     os.path.join(dir_path, 'log/tabela_autorizacao_equip.csv'),
@@ -129,14 +139,24 @@ class BancoDeDados():
                 spamwriter = csv.writer(csv_file, delimiter=';')
                 spamwriter.writerow(["id", "equipamento", "login", "nome", "super"])
         try:
-            file = open(os.path.join(dir_path, 'log/tabela_usuarios.csv'), 'r')
+            open(os.path.join(dir_path, 'log/tabela_usuarios.csv'), 'r')
         except IOError:
             with open(os.path.join(dir_path, 'log/tabela_usuarios.csv'),
                       'w+') as csv_file:
                 spamwriter = csv.writer(csv_file, delimiter=';')
                 spamwriter.writerow([
                     "id", "tag", "login", "nome", "email", "adicionado_por",
-                    "permissao", "senha"
+                    "permissao", "senha", "grupo/orientador"
+                ])
+        try:
+            open(os.path.join(dir_path, 'log/tabela_usuarios_antigos.csv'), 'r')
+        except IOError:
+            with open(os.path.join(dir_path, 'log/tabela_usuarios_antigos.csv'),
+                      'w+') as csv_file:
+                spamwriter = csv.writer(csv_file, delimiter=';')
+                spamwriter.writerow([
+                    "id", "tag", "login", "nome", "email", "adicionado_por",
+                    "permissao", "senha", "grupo/orientador"
                 ])
 
     def check_tabela_presenca(self):
@@ -152,6 +172,16 @@ class BancoDeDados():
         try:
             cur = self.conn.cursor()
             cur.execute("SELECT * FROM usuarios")
+            rows = cur.fetchall()
+            return rows
+        except Error as e:
+            print(e)
+
+
+    def check_tabela_usuarios_antigos(self):
+        try:
+            cur = self.conn.cursor()
+            cur.execute("SELECT * FROM usuarios_antigos")
             rows = cur.fetchall()
             return rows
         except Error as e:
@@ -198,6 +228,7 @@ class BancoDeDados():
         tabela_uso_equip = self.check_tabela_uso_equip()
         tabela_autorizacao_equip = self.check_tabela_autorizacao_equip()
         tabela_usuarios = self.check_tabela_usuarios()
+        tabela_usuarios_antigos = self.check_tabela_usuarios_antigos()
         tabela_presenca = self.check_tabela_presenca()
 
         with open(os.path.join(dir_path, 'log/tabela_uso_equip.csv'),
@@ -205,7 +236,7 @@ class BancoDeDados():
             spamwriter = csv.writer(csv_file, delimiter=';')
             spamwriter.writerow([
                 "id", "login", "nome", "equipamento", "hora_inicio", "hora_fim",
-                "tempo_total", "comentario"
+                "tempo_total", "comentario", "situacao"
             ])
             for row in tabela_uso_equip:
                 spamwriter.writerow(row)
@@ -223,10 +254,21 @@ class BancoDeDados():
             spamwriter = csv.writer(csv_file, delimiter=';')
             spamwriter.writerow([
                 "id", "tag", "login", "nome", "email", "adicionado_por", "permissao",
-                "senha"
+                "senha", "grupo/orientador"
             ])
             for row in tabela_usuarios:
                 spamwriter.writerow(row)
+
+        with open(os.path.join(dir_path, 'log/tabela_usuarios_antigos.csv'),
+                  'w+') as csv_file:
+            spamwriter = csv.writer(csv_file, delimiter=';')
+            spamwriter.writerow([
+                "id", "tag", "login", "nome", "email", "adicionado_por", "permissao",
+                "senha", "grupo/orientador"
+            ])
+            for row in tabela_usuarios_antigos:
+                spamwriter.writerow(row)
+
 
         with open(os.path.join(dir_path, 'log/tabela_presenca.csv'),
                   'w+') as csv_file:
@@ -243,38 +285,65 @@ class BancoDeDados():
                          email,
                          password,
                          tag_autorizacao,
+                         grupo,
                          permissao='apenas uso'):
         try:
-            sql = "INSERT INTO usuarios(tag, login, nome, email, senha ,adicionado_por, permissao) VALUES(?,?,?,?,?,?,?)"
+            sql = "INSERT INTO usuarios(tag, login, nome, email, senha ,adicionado_por, permissao, grupo) VALUES(?,?,?,?,?,?,?,?)"
             cur = self.conn.cursor()
             cur.execute(sql, (tag_novo, login, nome, email, password, tag_autorizacao,
-                              permissao))
+                              permissao, grupo))
             self.conn.commit()
             return True
         except Error as e:
             print(e)
             return False
 
-    def remove_usuario(self, tag_ou_nome_ou_login):
+    def usuario_aposentado(self,
+                         tag_novo,
+                         login,
+                         nome,
+                         email,
+                         password,
+                         tag_autorizacao,
+                         grupo,
+                         permissao):
         try:
-            sql = 'DELETE FROM usuarios WHERE tag=?'
+            sql = "INSERT INTO usuarios_antigos(tag, login, nome, email, senha ,adicionado_por, permissao, grupo) VALUES(?,?,?,?,?,?,?,?)"
             cur = self.conn.cursor()
-            cur.execute(sql, (tag_ou_nome_ou_login, ))
-            sql = 'DELETE FROM usuarios WHERE nome=?'
-            cur = self.conn.cursor()
-            cur.execute(sql, (tag_ou_nome_ou_login, ))
+            cur.execute(sql, (tag_novo, login, nome, email, password, tag_autorizacao,
+                              permissao, grupo))
+            self.conn.commit()
+            return True
+        except Error as e:
+            print(e)
+            return False
+
+    def remove_usuario_para_recadastro(self, login):
+        try:
             sql = 'DELETE FROM usuarios WHERE login=?'
             cur = self.conn.cursor()
-            cur.execute(sql, (tag_ou_nome_ou_login, ))
+            cur.execute(sql, (login, ))
             sql = 'DELETE FROM autorizacao_equip WHERE login=?'
             cur = self.conn.cursor()
-            cur.execute(sql, (tag_ou_nome_ou_login, ))
-            sql = 'DELETE FROM autorizacao_equip WHERE tag=?'
+            cur.execute(sql, (login, ))
+            self.conn.commit()
+        except Error as e:
+            print(e)
+
+
+    def remove_usuario_por_login(self, login):
+                
+        dados = self.check_usuario(login)
+        idx, tag, login, nome, email, add_por, permissao, senha, grupo = dados
+        
+        try:
+            self.usuario_aposentado(tag,login,nome,email,senha,add_por,grupo,permissao)
+            sql = 'DELETE FROM usuarios WHERE login=?'
             cur = self.conn.cursor()
-            cur.execute(sql, (tag_ou_nome_ou_login, ))
-            sql = 'DELETE FROM autorizacao_equip WHERE nome=?'
+            cur.execute(sql, (login, ))
+            sql = 'DELETE FROM autorizacao_equip WHERE login=?'
             cur = self.conn.cursor()
-            cur.execute(sql, (tag_ou_nome_ou_login, ))
+            cur.execute(sql, (login, ))
             self.conn.commit()
         except Error as e:
             print(e)
@@ -402,6 +471,19 @@ class BancoDeDados():
             print(e)
             return False
 
+    def get_login_from_tag(self, tag):
+        try:
+            cur = self.conn.cursor()
+            cur.execute("SELECT login FROM usuarios WHERE tag=?", (tag, ))
+            rows = cur.fetchall()
+            if rows:
+                return rows[0][0]
+            else:
+                return 'Tag sem login associado'
+        except Error as e:
+            print(e)
+            return False
+
     def get_email_from_login(self, login):
         try:
             cur = self.conn.cursor()
@@ -411,6 +493,33 @@ class BancoDeDados():
                 return rows[0][0]
             else:
                 return 'Login sem email associado'
+        except Error as e:
+            print(e)
+            return False
+
+    def get_grupo_from_login(self, login):
+        try:
+            cur = self.conn.cursor()
+            cur.execute("SELECT grupo FROM usuarios WHERE login=?", (login, ))
+            rows = cur.fetchall()
+            if rows:
+                return rows[0][0]
+            else:
+                return 'Login sem grupo associado'
+        except Error as e:
+            print(e)
+            return False
+
+
+
+    def add_autorizacao_equip(self, login, nome, equipamento, super="False"):
+        try:
+            sql = "INSERT INTO autorizacao_equip(login, nome, equipamento, super) VALUES(?,?,?,?)"
+            cur = self.conn.cursor()
+            cur.execute(sql, (login, nome, equipamento, super))
+            self.conn.commit()
+            print('adicionado na linha ' + str(cur.lastrowid))
+            return True
         except Error as e:
             print(e)
             return False
@@ -467,6 +576,31 @@ class BancoDeDados():
             cur.execute(
                 "SELECT DISTINCT login FROM autorizacao_equip WHERE equipamento=?",
                 (equip, ))
+            rows = cur.fetchall()
+            if rows:
+                return [item[0] for item in rows]
+            return []
+        except Error as e:
+            print(e)
+
+
+    def check_todos_grupos_do_equip(self):
+        try:
+            cur = self.conn.cursor()
+            cur.execute("SELECT DISTINCT grupo FROM usuarios")
+            rows = cur.fetchall()
+            if rows:
+                return [item[0] for item in rows]
+            return []
+        except Error as e:
+            print(e)
+
+    def check_todos_usuarios_do_grupo(self, grupo):
+        try:
+            cur = self.conn.cursor()
+            cur.execute(
+                "SELECT DISTINCT login FROM usuarios WHERE grupo=?",
+                (grupo, ))
             rows = cur.fetchall()
             if rows:
                 return [item[0] for item in rows]
@@ -563,10 +697,12 @@ class BancoDeDados():
         except Error as e:
             print(e)
 
-    def set_hora_fim(self, login, equipamento, tempo_total):
+    def set_hora_fim(self, login, equipamento, tempo_total, situacao='OK'):
         try:
             if self.check_autorizacao_equip(login, equipamento) is True:
-                linha_id = self.check_id_inicio(login, equipamento)
+                # linha_id = self.check_id_inicio(login, equipamento)
+                linha_id = self.ultima_linha_registrada(login, equipamento)
+
                 if linha_id == []:
                     print("ERRO! " + login + ' não está usando o equipamento.')
                     return False
@@ -576,9 +712,9 @@ class BancoDeDados():
                 else:
                     hora = '[RPI OFFLINE]' + str(datetime.datetime.now())[:-7]
                 
-                sql = "UPDATE uso_equip SET hora_fim = ?, tempo_total = ? WHERE id = ?"
+                sql = "UPDATE uso_equip SET hora_fim = ?, tempo_total = ?, situacao = ? WHERE id = ?"
                 cur = self.conn.cursor()
-                cur.execute(sql, (hora, tempo_total, linha_id))
+                cur.execute(sql, (hora, tempo_total, situacao, linha_id))
                 self.conn.commit()
                 print('Usuário: ' + login + '\tFim: ' + hora)
         except Error as e:
@@ -589,16 +725,76 @@ class BancoDeDados():
         try:
             em_uso = self.check_equip_em_uso()
             if equipamento in [item[0] for item in em_uso]:
-                self.set_hora_fim(em_uso[0][1], em_uso[0][0],
-                                  "SAÍDA FORÇADA POR " + login)
+                inicio = em_uso[0][2][-8:]
+                fim_forcado = str(datetime.datetime.now())[:-7][-8:]
+                tempo_forcado = self.subtrair_tempo(fim_forcado, inicio)
+                self.set_hora_fim(em_uso[0][1], em_uso[0][0], tempo_forcado, situacao="Esqueceu logado! Saída forçada por " + login)
+                                                                     
         except Error as e:
             print(e)
+
+    def ultima_linha_registrada(self, login, equipamento):
+        try:
+            cur = self.conn.cursor()
+            cur.execute("SELECT id FROM uso_equip WHERE login = ? and equipamento = ?",(login, equipamento))
+            row = cur.fetchall()
+            return row[-1][0]
+        except Error as e:
+            print(e)
+
+    def set_hora_fim_seguranca(self, login, equipamento, tempo_total, situacao='Erro! Registro de segurança ativado.'):
+        try:
+            id = self.ultima_linha_registrada(login, equipamento)
+            if self.rpi_online():
+                hora = str(datetime.datetime.now())[:-7]
+            else:
+                hora = '[RPI OFFLINE]' + str(datetime.datetime.now())[:-7]            
+            sql = "UPDATE uso_equip SET hora_fim = ?, tempo_total = ?, situacao = ? WHERE id = ?"
+            cur = self.conn.cursor()
+            cur.execute(sql, (hora, tempo_total, situacao, id))
+            self.conn.commit()
+        except Error as e:
+            print(e)
+
+
+
+    def subtrair_tempo(self, tempo1, tempo2):
+        t1_seg = int(tempo1[-2:])
+        t1_min = int(tempo1[-5:-3])
+        t1_hora = int(tempo1[-8:-6])
+        t2_seg = int(tempo2[-2:])
+        t2_min = int(tempo2[-5:-3])
+        t2_hora = int(tempo2[-8:-6])
+
+        t1 = t1_seg + 60*t1_min + 60*60*t1_hora
+        t2 = t2_seg + 60*t2_min + 60*60*t2_hora
+
+        dt = t1 - t2
+        
+        dt_hora = int(dt/3600)
+        dt_min = int((dt%3600)/60)
+        dt_seg = int((dt%3600)%60)
+
+        if dt_seg < 10:
+            s = '0' + str(dt_seg)
+        else:
+            s = str(dt_seg)               
+        if dt_min < 10:
+            m = '0' + str(dt_min)
+        else:
+            m = str(dt_min)
+        if dt_hora < 10:
+            h = '0' + str(dt_hora)
+        else:
+            h = str(dt_hora)      
+
+        return h + ':' + m + ':' + s
 
     def check_equip_em_uso(self):
         try:
             cur = self.conn.cursor()
             cur.execute(
-                "SELECT DISTINCT equipamento, login FROM uso_equip WHERE hora_fim IS NULL"
+                "SELECT DISTINCT equipamento, login, hora_inicio FROM uso_equip WHERE hora_fim IS NULL"
             )
             rows = cur.fetchall()
             return rows
@@ -690,7 +886,7 @@ class BancoDeDados():
     def check_uso_equip(self, login):
         try:
             cur = self.conn.cursor()
-            cur.execute("SELECT login, nome, hora_inicio, hora_fim, tempo_total FROM uso_equip WHERE login=?", (login, ))
+            cur.execute("SELECT login, nome, hora_inicio, hora_fim, tempo_total, situacao, comentario FROM uso_equip WHERE login=?", (login, ))
             dados = cur.fetchall()
             if dados == []:
                 return dados
@@ -698,6 +894,39 @@ class BancoDeDados():
         except Error as e:
             print(e)
 
+    def todas_linhas_de_uso(self, equipamento):
+        try:
+            cur = self.conn.cursor()
+            cur.execute("SELECT id FROM uso_equip WHERE equipamento=?",(equipamento,))
+            row = cur.fetchall()
+            return row
+        except Error as e:
+            print(e)
+
+
+    def get_nome_from_id(self, id):
+        try:
+            cur = self.conn.cursor()
+            cur.execute("SELECT nome FROM uso_equip WHERE id=?", (id, ))
+            rows = cur.fetchall()
+            if rows:
+                return rows[0][0]
+            else:
+                return 'Login sem nome associado'
+        except Error as e:
+            print(e)
+            return False
+
+    def check_uso_equip_id(self, id):
+        try:
+            cur = self.conn.cursor()
+            cur.execute("SELECT login, nome, hora_inicio, hora_fim, tempo_total, situacao, comentario FROM uso_equip WHERE id=?", (id, ))
+            dados = cur.fetchall()
+            if dados == []:
+                return dados
+            return dados
+        except Error as e:
+            print(e)
 
     def check_tempo_total_de_uso_equip(self):
         try:
@@ -712,4 +941,7 @@ class BancoDeDados():
 
 
 if __name__ == '__main__':
-    db = BancoDeDados()
+    db = BancoDeDados('arquivo.db')
+
+
+# %%
