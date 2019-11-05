@@ -307,7 +307,7 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>Tempo total:       </string>
+           <string>Tempo total do usuário:       </string>
           </property>
          </widget>
         </item>
@@ -366,7 +366,66 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>Percentual:       </string>
+           <string>Total de horas de equip. ligado:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="lbl_totalLigado">
+          <property name="minimumSize">
+           <size>
+            <width>50</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_19">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_10">
+        <item>
+         <spacer name="horizontalSpacer_20">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>30</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_9">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Percentual de uso:</string>
           </property>
          </widget>
         </item>
@@ -384,7 +443,7 @@
          </widget>
         </item>
         <item>
-         <spacer name="horizontalSpacer_19">
+         <spacer name="horizontalSpacer_21">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>

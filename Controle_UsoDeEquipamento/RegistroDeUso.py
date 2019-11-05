@@ -378,6 +378,7 @@ class TelaHistoricoDeUso(QMainWindow):
         uic.loadUi('GUI/telaHistDeUso.ui', self)
         self.janelaPrincipal = janelaPrincipal
         self.popular_combobox()
+        self.setWindowIcon(QtGui.QIcon('./imagens/icon.png'))
 
         self.cbx_logins.activated.connect(self.login_selecionado)
 
@@ -408,22 +409,53 @@ class TelaHistoricoDeUso(QMainWindow):
             return
         
         uso = '   Dia      -   Tempo de Uso'
-        tempo_total = '00:00:00'
+        tempo_total_do_usuario = '00:00:00'
         for linha in dados:
             uso += '\r\n'
             dia = linha[2][-19:-9] 
             tempo_de_uso = linha[4]
             if tempo_de_uso is None:
                 uso += dia + ' - Equipamento ainda em uso'
-                tempo_total = tempo_total + ' + Em uso'
+                self.txt_uso.setText(uso)
+                self.lbl_tempo_total.setText(tempo_total_do_usuario + ' + Em uso')
             else:        
                 uso += dia + ' - ' + tempo_de_uso
-                tempo_total = self.somar_tempo(tempo_total,tempo_de_uso)
+                tempo_total_do_usuario = self.somar_tempo(tempo_total_do_usuario,tempo_de_uso)
+                self.txt_uso.setText(uso)
+                self.lbl_tempo_total.setText(tempo_total_do_usuario)
 
-        self.txt_uso.setText(uso)
-        self.lbl_tempo_total.setText(tempo_total)
-
+        tempos = self.janelaPrincipal.db.check_tempo_total_de_uso_equip()
+        total_de_horas_ligado = "00:00:00"
+        em_uso = ""
+        for tempo in tempos:
+            print(tempo[0])
+            if tempo[0] is None:
+                em_uso = "+ Em uso" 
+            else:        
+                total_de_horas_ligado =  self.somar_tempo(total_de_horas_ligado,tempo[0])
         
+            
+        self.lbl_totalLigado.setText(total_de_horas_ligado + ' ' + em_uso)
+ 
+        percent = self.percentual_uso(total_de_horas_ligado,tempo_total_do_usuario)
+        self.lbl_percentual.setText('{0:.6g} %'.format(100*percent))
+
+
+    def percentual_uso(self,tempo_equip, tempo_usuario):
+        t1_seg = int(tempo_equip[-2:])
+        t1_min = int(tempo_equip[-5:-3])
+        t1_hora = int(tempo_equip[-8:-6])
+        t2_seg = int(tempo_usuario[-2:])
+        t2_min = int(tempo_usuario[-5:-3])
+        t2_hora = int(tempo_usuario[-8:-6])
+
+        t_equip = (t1_hora*60 + t1_min)*60 + t1_seg
+        t_usuario = (t2_hora*60 + t2_min)*60 + t2_seg
+
+        percentual = float(t_usuario)/float(t_equip)
+
+        return percentual
+
     def somar_tempo(self, tempo1, tempo2):      
         t1_seg = int(tempo1[-2:])
         t1_min = int(tempo1[-5:-3])
@@ -553,6 +585,7 @@ class TempoUso(QMainWindow):
     def __init__(self, janelaPrincipal, usuario, parent=None):
         super(TempoUso, self).__init__(parent)
         uic.loadUi('GUI/telaTempoUso.ui', self)
+        self.setWindowIcon(QtGui.QIcon('./imagens/icon.png'))
         self.login = usuario
         self.janelaPrincipal = janelaPrincipal
         self.checkThreadTimer = QtCore.QTimer(self)

@@ -699,5 +699,17 @@ class BancoDeDados():
             print(e)
 
 
+    def check_tempo_total_de_uso_equip(self):
+        try:
+            cur = self.conn.cursor()
+            cur.execute("SELECT tempo_total FROM uso_equip ")
+            dados = cur.fetchall()
+            if dados == []:
+                return dados
+            return dados
+        except Error as e:
+            print(e)
+
+
 if __name__ == '__main__':
     db = BancoDeDados()
