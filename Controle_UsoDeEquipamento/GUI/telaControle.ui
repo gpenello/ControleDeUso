@@ -413,7 +413,7 @@ QPushButton:pressed {
            </size>
           </property>
           <property name="text">
-           <string>Todos Usuários</string>
+           <string>Usuários Ativos</string>
           </property>
          </widget>
         </item>
@@ -436,7 +436,7 @@ QPushButton:pressed {
      <x>0</x>
      <y>0</y>
      <width>530</width>
-     <height>18</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

@@ -444,6 +444,18 @@ class BancoDeDados():
     #     except Error as e:
     #         print(e)
 
+    def get_nome_from_login_antigo(self, login):
+        try:
+            cur = self.conn.cursor()
+            cur.execute("SELECT nome FROM usuarios_antigos WHERE login=?", (login, ))
+            rows = cur.fetchall()
+            if rows:
+                return rows[0][0]
+            else:
+                return 'Login sem nome associado'
+        except Error as e:
+            print(e)
+            return False
 
     def get_nome_from_login(self, login):
         try:
@@ -608,6 +620,20 @@ class BancoDeDados():
         except Error as e:
             print(e)
 
+
+    def check_todos_usuarios_antigos_do_grupo(self, grupo):
+        try:
+            cur = self.conn.cursor()
+            cur.execute(
+                "SELECT DISTINCT login FROM usuarios_antigos WHERE grupo=?",
+                (grupo, ))
+            rows = cur.fetchall()
+            if rows:
+                return [item[0] for item in rows]
+            return []
+        except Error as e:
+            print(e)
+
     def check_todos_superusuarios_do_equip(self, equip):
         try:
             cur = self.conn.cursor()
@@ -742,7 +768,7 @@ class BancoDeDados():
         except Error as e:
             print(e)
 
-    def set_hora_fim_seguranca(self, login, equipamento, tempo_total, situacao='Erro! Registro de segurança ativado.'):
+    def set_hora_fim_seguranca(self, login, equipamento, tempo_total, situacao='ERRO! REGISTRO DE SEGURANÇA A CADA MINUTO ATIVADO!.'):
         try:
             id = self.ultima_linha_registrada(login, equipamento)
             if self.rpi_online():
