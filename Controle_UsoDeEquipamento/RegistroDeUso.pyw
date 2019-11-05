@@ -10,6 +10,8 @@ import subprocess
 import signal
 from sys import platform
 
+from pynput import keyboard
+
 import criptografarPassword as cript
 from BancoDeDados_Local import BancoDeDados
 import paramikoClient
@@ -53,7 +55,11 @@ class DesignerMainWindow(QMainWindow):
         self.novoUsuario = NovoUsuario(self)
         self.todosUsuarios = TelaTodosUsuarios(self)
         self.historicoDeUso = TelaHistoricoDeUso(self)
-        
+        # def callback(event):
+        #     print(event.name)
+        #     print(event.scan_code)  #125 - windows key, tab - 15, alt - 56
+        #     print(event.time)
+
         self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint |
                             QtCore.Qt.FramelessWindowHint)
         #        self.setWindowFlags()
@@ -75,6 +81,7 @@ class DesignerMainWindow(QMainWindow):
 
         if platform == "linux" or platform == "linux2":
             self.software_externo = subprocess.Popen(['sudo', 'python3', self.software_externo_path])
+            subprocess.Popen(['xmodmap', '.Xmodmap_disable'])
 
     def shutdown(self):
         reply = QMessageBox.question(self, 'Desligando...',
@@ -85,7 +92,6 @@ class DesignerMainWindow(QMainWindow):
                 subprocess.Popen(['sudo', 'shutdown', '-h', 'now'])
             elif platform == "win32":
                 QMessageBox.about(self, "Desligando...","Este comando funciona apenas em Linux.")
-
 
     def baixar_db_usuarios(self):
         try:
@@ -131,7 +137,6 @@ class DesignerMainWindow(QMainWindow):
 
         self.lbl_info.setText("")
 
-
     def verHistoricoDeUso(self):
 
         senha_autorizacao, ok = QInputDialog.getText(
@@ -143,11 +148,10 @@ class DesignerMainWindow(QMainWindow):
                 self.historicoDeUso.popular_combobox()
                 self.historicoDeUso.show()
                 self.historicoDeUso.activateWindow()
+                subprocess.Popen(['xmodmap', '.Xmodmap_enable'])
             else:
                 QMessageBox.about(self, "Erro!",
                                   "Senha de autorização não confere!")        
-
-
 
     def verTodosUsuarios(self):
 
@@ -160,6 +164,8 @@ class DesignerMainWindow(QMainWindow):
                 self.todosUsuarios.popular_combobox()
                 self.todosUsuarios.show()
                 self.todosUsuarios.activateWindow()
+                subprocess.Popen(['xmodmap', '.Xmodmap_enable'])
+
             else:
                 QMessageBox.about(self, "Erro!",
                                   "Senha de autorização não confere!")        
@@ -174,6 +180,8 @@ class DesignerMainWindow(QMainWindow):
                 self.keep_minimized()
                 self.novoUsuario.show()
                 self.novoUsuario.activateWindow()
+                subprocess.Popen(['xmodmap', '.Xmodmap_enable'])
+
             else:
                 QMessageBox.about(self, "Erro!",
                                   "Senha de autorização não confere!")
@@ -261,7 +269,9 @@ class DesignerMainWindow(QMainWindow):
                 else:
                     self.showNormal()
                 self.db.export_all_db_to_csv()
-                                
+                
+                subprocess.Popen(['xmodmap', '.Xmodmap_disable'])
+
                 if self.servidorFTP is True:
                     self.enviar_db_local_FTP()
                 

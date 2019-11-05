@@ -1,0 +1,13 @@
+!https://ubuntuforums.org/showthread.php?t=1849107
+
+! Enable Alt key
+keycode  64 = Alt_L Meta_L Alt_L Meta_L
+
+! Enable ESC key
+keycode 9 = Escape NoSymbol Escape
+
+! https://unix.stackexchange.com/questions/9098/map-windows-key-on-keyboard-to-ctrl
+! Enable Win key
+add mod4 = Super_L Super_R
+
+! https://www.raspberrypi.org/forums/viewtopic.php?t=110934

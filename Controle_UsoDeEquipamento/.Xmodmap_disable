@@ -1,0 +1,14 @@
+!https://ubuntuforums.org/showthread.php?t=1849107
+
+! Disable Alt key
+keycode  64 = NoSymbol NoSymbol NoSymbol NoSymbol
+
+! Disable ESC key
+keycode 9 = NoSymbol NoSymbol NoSymbol
+
+! https://unix.stackexchange.com/questions/9098/map-windows-key-on-keyboard-to-ctrl
+! Disable Win key
+remove mod4 = Super_L Super_R
+
+! https://www.raspberrypi.org/forums/viewtopic.php?t=110934
+                    
