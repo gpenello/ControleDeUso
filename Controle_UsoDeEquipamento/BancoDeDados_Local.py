@@ -394,7 +394,7 @@ class BancoDeDados():
     def check_admin(self):
         try:
             cur = self.conn.cursor()
-            cur.execute("SELECT * FROM admin WHERE login=?", ("admin", ))
+            cur.execute("SELECT * FROM admin WHERE login='admin'")
             row = cur.fetchall()
             if row == []:
                 return row

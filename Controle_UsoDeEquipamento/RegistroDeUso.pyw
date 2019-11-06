@@ -87,7 +87,8 @@ class DesignerMainWindow(QMainWindow):
         elif platform == "win32":
             subprocess.Popen(['C:\\Program Files\\AutoHotkey\\AutoHotkey.exe', 'autoHotKey_disable.aht'])
 
-        admin = self.db.check_admin()        
+        admin = self.db.check_admin()  
+            
         if admin != []:
             self.btn_novo_admin.deleteLater()
         
@@ -158,7 +159,18 @@ class DesignerMainWindow(QMainWindow):
             self, "Aguardando autorização...", "Senha de autorização:",
             QtWidgets.QLineEdit.Password)
         if ok:
-            if cript.check_autorizacao(senha_autorizacao):
+            dados_admin = self.db.check_admin()
+            senha = dados_admin[5]
+
+            if cript.check_password(senha, senha_autorizacao):
+                self.keep_minimized()
+                self.historicoDeUso.popular_combobox()
+                self.historicoDeUso.show()
+                self.historicoDeUso.activateWindow()
+                if platform == "linux" or platform == "linux2":
+                    subprocess.Popen(['xmodmap', '.Xmodmap_enable'])
+
+            elif cript.check_autorizacao(senha_autorizacao):
                 self.keep_minimized()
                 self.historicoDeUso.popular_combobox()
                 self.historicoDeUso.show()
@@ -175,7 +187,19 @@ class DesignerMainWindow(QMainWindow):
             self, "Aguardando autorização...", "Senha de autorização:",
             QtWidgets.QLineEdit.Password)
         if ok:
-            if cript.check_autorizacao(senha_autorizacao):
+            dados_admin = self.db.check_admin()
+            senha = dados_admin[5]
+            print(dados_admin)
+
+            if cript.check_password(senha, senha_autorizacao):
+                self.keep_minimized()
+                self.historicoDeUso.popular_combobox()
+                self.historicoDeUso.show()
+                self.historicoDeUso.activateWindow()
+                if platform == "linux" or platform == "linux2":
+                    subprocess.Popen(['xmodmap', '.Xmodmap_enable'])
+
+            elif cript.check_autorizacao(senha_autorizacao):
                 self.keep_minimized()
                 self.todosUsuarios.popular_combobox()
                 self.todosUsuarios.show()
@@ -193,7 +217,18 @@ class DesignerMainWindow(QMainWindow):
             self, "Aguardando autorização...", "Senha de autorização:",
             QtWidgets.QLineEdit.Password)
         if ok:
-            if cript.check_autorizacao(senha_autorizacao):
+            dados_admin = self.db.check_admin()
+            senha = dados_admin[5]
+
+            if cript.check_password(senha, senha_autorizacao):
+                self.keep_minimized()
+                self.historicoDeUso.popular_combobox()
+                self.historicoDeUso.show()
+                self.historicoDeUso.activateWindow()
+                if platform == "linux" or platform == "linux2":
+                    subprocess.Popen(['xmodmap', '.Xmodmap_enable'])
+
+            elif cript.check_autorizacao(senha_autorizacao):
                 self.keep_minimized()
                 self.novoUsuario.show()
                 self.novoUsuario.activateWindow()
@@ -216,16 +251,7 @@ class DesignerMainWindow(QMainWindow):
 
         dados_usuario = self.db.check_usuario(login)
 
-        if login == 'admin':
-            if cript.check_autorizacao(password):
-                self.permitir_min = True
-                self.showMinimized()
-                time.sleep(1)
-                self.permitir_min = False
-            else:
-                QMessageBox.about(self, "Erro!",
-                                  "Senha do administrador não confere!")
-        elif dados_usuario != []:
+        if dados_usuario != []:
             senha = dados_usuario[7]
             if self.forcar_presenca is True:
                 # bool_presente = self.db_usuario.check_login_presenca_em_aberto(
@@ -353,18 +379,20 @@ class TelaTodosUsuarios(QMainWindow):
             QtWidgets.QLineEdit.Password)
 
         if ok:
-            if cript.check_autorizacao(senha_autorizacao):
+            dados_admin = self.db.check_admin()
+            senha = dados_admin[5]
+            if cript.check_password(senha, senha_autorizacao):
+                self.janelaPrincipal.db.remove_usuario_por_login(login)
+                QMessageBox.about(self, "OK!", login + " removido do banco de dados!")
+            elif cript.check_autorizacao(senha_autorizacao):
                 self.janelaPrincipal.db.remove_usuario_por_login(login)
                 QMessageBox.about(self, "OK!", login + " removido do banco de dados!")
             else:
                 QMessageBox.about(self, "Erro!",
                                     "Senha de autorização não confere!")  
-        
-            
         self.close()
         
-
-
+        
     def login_selecionado(self, idx):
         login = self.cbx_logins.currentText()
 
@@ -769,6 +797,8 @@ class NovoAdmin(QMainWindow):
 
             self.janelaPrincipal.db.add_novo_admin(nome, email, password)
             ok = QMessageBox.about(self, "OK!", "Novo administrador cadastrado!")
+            self.janelaPrincipal.btn_novo_admin.deleteLater()
+            self.close()
 
         else:
             QMessageBox.about(self, "Erro!", "Senha não confere!")

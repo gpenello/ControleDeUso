@@ -18,13 +18,12 @@ def check_password(hashed_password, user_password):
     return password == hashlib.sha256(salt.encode() +
                                       user_password.encode()).hexdigest()
 
-
 def check_autorizacao(senha_autorizacao):
     password, salt = autorizacao.split(
         ':')
     return password == hashlib.sha256(salt.encode() +
                                       senha_autorizacao.encode()).hexdigest()
-
+    
                                       
 if __name__ == '__main__':
     import re  # https://www.debuggex.com/cheatsheet/regex/python    
