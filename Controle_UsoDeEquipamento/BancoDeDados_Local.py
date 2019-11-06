@@ -38,6 +38,16 @@ class BancoDeDados():
     def fechar_conn(self):
         self.conn.close()
 
+    def create_table_admin(self):
+        nova_tabela = "CREATE TABLE IF NOT EXISTS admin(id INTEGER PRIMARY " +\
+            "KEY, tag TEXT, login TEXT, nome TEXT UNIQUE, email TEXT, " +\
+            "senha TEXT)"
+        try:
+            c = self.conn.cursor()
+            c.execute(nova_tabela)
+        except Error as e:
+            print(e)        
+
     def create_table_usuarios(self):
         nova_tabela = "CREATE TABLE IF NOT EXISTS usuarios(id INTEGER PRIMARY " +\
             "KEY, tag TEXT UNIQUE, login TEXT UNIQUE, nome TEXT UNIQUE, email TEXT, adicionado_por TEXT, " +\
@@ -97,11 +107,15 @@ class BancoDeDados():
             if self.conn is not None:
                 self.create_table_usuarios()  # criando tabela usuarios
                 self.create_table_usuarios_antigos()  # criando tabela usuarios antigos
+                self.create_table_admin()
                 self.create_table_autorizacao_equip()  # tabela de autorizacoes
                 # criando controle de uso de equip.
                 self.create_table_uso_equip()
                 self.create_table_presenca()
                 self.create_csv_files()
+
+                # password = cript.hash_password(password)
+                # self.add_novo_admin("sem tag", "admin", "Administrador-Germano", "gpenello@gmail.com", password)
 
             else:
                 print("Error! cannot create the database connection.")
@@ -278,6 +292,19 @@ class BancoDeDados():
             for row in tabela_presenca:
                 spamwriter.writerow(row)
 
+
+    def add_novo_admin(self,nome,email,password):
+        try:
+            sql = "INSERT INTO admin(tag, login, nome, email, senha) VALUES(?,?,?,?,?)"
+            cur = self.conn.cursor()
+            cur.execute(sql, ("sem tag", "admin", nome, email, password))
+            self.conn.commit()
+            return True
+        except Error as e:
+            print(e)
+            return False
+
+
     def add_novo_usuario(self,
                          tag_novo,
                          login,
@@ -362,6 +389,18 @@ class BancoDeDados():
     #         return row
     #     except Error as e:
     #         print(e)
+
+
+    def check_admin(self):
+        try:
+            cur = self.conn.cursor()
+            cur.execute("SELECT * FROM admin WHERE login=?", ("admin", ))
+            row = cur.fetchall()
+            if row == []:
+                return row
+            return [item for item in row[0]]
+        except Error as e:
+            print(e)
 
     def check_usuario(self, login):
         try:
@@ -967,7 +1006,7 @@ class BancoDeDados():
 
 
 if __name__ == '__main__':
-    db = BancoDeDados('arquivo.db')
+    db = BancoDeDados('arquivo.db') #exemplo de uso
 
 
 # %%

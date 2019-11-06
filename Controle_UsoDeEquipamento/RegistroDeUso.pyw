@@ -54,6 +54,8 @@ class DesignerMainWindow(QMainWindow):
         self.novoUsuario = NovoUsuario(self)
         self.todosUsuarios = TelaTodosUsuarios(self)
         self.historicoDeUso = TelaHistoricoDeUso(self)
+        self.novoAdmin = NovoAdmin(self)
+
         # def callback(event):
         #     print(event.name)
         #     print(event.scan_code)  #125 - windows key, tab - 15, alt - 56
@@ -67,6 +69,7 @@ class DesignerMainWindow(QMainWindow):
         self.btn_novo.clicked.connect(self.cadastrarNovoUsuario)
         self.btn_usuarios.clicked.connect(self.verTodosUsuarios)
         self.btn_tempo.clicked.connect(self.verHistoricoDeUso)
+        self.btn_novo_admin.clicked.connect(self.cadastrarNovoAdmin)
 
         self.btn_ok.clicked.connect(self.get_login_pass)
         self.btn_power.clicked.connect(self.shutdown)
@@ -84,6 +87,17 @@ class DesignerMainWindow(QMainWindow):
         elif platform == "win32":
             subprocess.Popen(['C:\\Program Files\\AutoHotkey\\AutoHotkey.exe', 'autoHotKey_disable.aht'])
 
+        admin = self.db.check_admin()        
+        if admin != []:
+            self.btn_novo_admin.deleteLater()
+        
+    def cadastrarNovoAdmin(self):
+        self.keep_minimized()
+        self.novoAdmin.show()
+        self.novoAdmin.activateWindow()
+        if platform == "linux" or platform == "linux2":
+            subprocess.Popen(['xmodmap', '.Xmodmap_enable'])
+    
     def shutdown(self):
         reply = QMessageBox.question(self, 'Desligando...',
                                         'Desligar o computador?', QMessageBox.Yes,
@@ -297,14 +311,6 @@ class DesignerMainWindow(QMainWindow):
         qr = self.frameGeometry()
         qr.moveCenter(centroTela)
         self.move(qr.topLeft())
-
-    # def keyPressEvent(self, event):
-    #     if event.modifiers() == QtCore.Qt.AltModifier:
-    #         print('mod')    
-    #         event.ignore()
-    #         return
-
-
 
     def closeEvent(self, event):
         if self.sair is False:
@@ -729,6 +735,54 @@ class NovoUsuario(QMainWindow):
         if self.janelaPrincipal.TelaCheia is True:
             self.janelaPrincipal.showFullScreen()
         else:
+            self.janelaPrincipal.showNormal()
+        self.janelaPrincipal.activateWindow()
+        self.janelaPrincipal.txt_login.setFocus()
+
+
+class NovoAdmin(QMainWindow):
+
+    def __init__(self, janelaPrincipal, parent=None):
+        super(NovoAdmin, self).__init__(parent)
+        uic.loadUi(os.path.join(GUI_path, 'telaRegistrarNovoAdmin.ui'), self)
+        self.setWindowIcon(QtGui.QIcon(os.path.join(img_path, "icon.png")))
+
+        self.janelaPrincipal = janelaPrincipal
+        self.txt_password.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.txt_password_2.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.txt_password_2.returnPressed.connect(self.get_login_pass)
+        self.btn_sair.clicked.connect(self.close)
+        self.btn_ok.clicked.connect(self.get_login_pass)
+
+    def get_login_pass(self):
+        nome = self.txt_nome.text()
+        email = self.txt_email.text()
+        password = self.txt_password.text()
+        password2 = self.txt_password_2.text()
+        self.txt_nome.setText('')
+        self.txt_email.setText('')
+        self.txt_password.setText('')   
+        self.txt_password_2.setText('')
+        
+        if nome != "" and password == password2:
+            password = cript.hash_password(password)
+
+            self.janelaPrincipal.db.add_novo_admin(nome, email, password)
+            ok = QMessageBox.about(self, "OK!", "Novo administrador cadastrado!")
+
+        else:
+            QMessageBox.about(self, "Erro!", "Senha não confere!")
+            self.txt_nome.setText(nome)
+            self.txt_email.setText(email)
+
+
+
+    def closeEvent(self, event):
+        self.janelaPrincipal.permitir_min = False
+        if self.janelaPrincipal.TelaCheia is True:
+            self.janelaPrincipal.showFullScreen()
+        else:
+            print('false')
             self.janelaPrincipal.showNormal()
         self.janelaPrincipal.activateWindow()
         self.janelaPrincipal.txt_login.setFocus()

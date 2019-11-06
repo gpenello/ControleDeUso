@@ -48,7 +48,7 @@ if __name__ == '__main__':
 
             with open(sys.argv[0], mode='w', encoding='utf-8') as f:
                 f.write(new_code)
-            print("Senha do adminisrador foi atualizada!")    
+            print("Senha do administrador foi atualizada!")    
         else:
             print("Erro! Senha do administrador não confere! Tente novamente.")            
     else:

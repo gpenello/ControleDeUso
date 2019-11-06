@@ -380,6 +380,25 @@ QPushButton:pressed {
          </spacer>
         </item>
         <item>
+         <widget class="QPushButton" name="btn_novo_admin">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>70</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Novo admin</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="btn_tempo">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -436,7 +455,7 @@ QPushButton:pressed {
      <x>0</x>
      <y>0</y>
      <width>530</width>
-     <height>25</height>
+     <height>18</height>
     </rect>
    </property>
   </widget>
