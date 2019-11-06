@@ -29,7 +29,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Registro de uso</string>
+   <string>Usuários ativos</string>
   </property>
   <property name="windowOpacity">
    <double>0.900000000000000</double>

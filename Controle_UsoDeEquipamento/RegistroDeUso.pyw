@@ -10,7 +10,6 @@ import subprocess
 import signal
 from sys import platform
 
-from pynput import keyboard
 
 import criptografarPassword as cript
 from BancoDeDados_Local import BancoDeDados
@@ -82,6 +81,8 @@ class DesignerMainWindow(QMainWindow):
         if platform == "linux" or platform == "linux2":
             self.software_externo = subprocess.Popen(['sudo', 'python3', self.software_externo_path])
             subprocess.Popen(['xmodmap', '.Xmodmap_disable'])
+        elif platform == "win32":
+            subprocess.Popen(['C:\\Program Files\\AutoHotkey\\AutoHotkey.exe', 'autoHotKey_disable.aht'])
 
     def shutdown(self):
         reply = QMessageBox.question(self, 'Desligando...',
@@ -148,7 +149,8 @@ class DesignerMainWindow(QMainWindow):
                 self.historicoDeUso.popular_combobox()
                 self.historicoDeUso.show()
                 self.historicoDeUso.activateWindow()
-                subprocess.Popen(['xmodmap', '.Xmodmap_enable'])
+                if platform == "linux" or platform == "linux2":
+                    subprocess.Popen(['xmodmap', '.Xmodmap_enable'])
             else:
                 QMessageBox.about(self, "Erro!",
                                   "Senha de autorização não confere!")        
@@ -164,7 +166,8 @@ class DesignerMainWindow(QMainWindow):
                 self.todosUsuarios.popular_combobox()
                 self.todosUsuarios.show()
                 self.todosUsuarios.activateWindow()
-                subprocess.Popen(['xmodmap', '.Xmodmap_enable'])
+                if platform == "linux" or platform == "linux2":
+                    subprocess.Popen(['xmodmap', '.Xmodmap_enable'])
 
             else:
                 QMessageBox.about(self, "Erro!",
@@ -180,7 +183,8 @@ class DesignerMainWindow(QMainWindow):
                 self.keep_minimized()
                 self.novoUsuario.show()
                 self.novoUsuario.activateWindow()
-                subprocess.Popen(['xmodmap', '.Xmodmap_enable'])
+                if platform == "linux" or platform == "linux2":
+                    subprocess.Popen(['xmodmap', '.Xmodmap_enable'])
 
             else:
                 QMessageBox.about(self, "Erro!",
@@ -269,8 +273,8 @@ class DesignerMainWindow(QMainWindow):
                 else:
                     self.showNormal()
                 self.db.export_all_db_to_csv()
-                
-                subprocess.Popen(['xmodmap', '.Xmodmap_disable'])
+                if platform == "linux" or platform == "linux2":
+                    subprocess.Popen(['xmodmap', '.Xmodmap_disable'])
 
                 if self.servidorFTP is True:
                     self.enviar_db_local_FTP()

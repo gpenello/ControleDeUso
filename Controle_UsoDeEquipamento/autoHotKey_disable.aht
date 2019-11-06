@@ -1,3 +1,4 @@
+#SingleInstance force
 #IfWinActive Registro de uso
 {
 ; Disable Alt+Tab
@@ -11,5 +12,9 @@ LWin::Return
 
 ; Disable Right Windows Key
 RWin::Return
-    
+
+; Disable CTRL+Esc Key
+^Esc::Return
+
+
 }     
