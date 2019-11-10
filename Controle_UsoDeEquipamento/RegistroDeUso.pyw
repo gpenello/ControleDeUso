@@ -119,7 +119,7 @@ class DesignerMainWindow(QMainWindow):
                                         'Fazer update do programa?', QMessageBox.Yes,
                                         QMessageBox.No)
         if reply == QMessageBox.Yes:
-            if is_online():
+            if self.is_online():
                 subprocess.Popen(['git', 'pull', 'origin', 'master'])
 
                 QMessageBox.about(
