@@ -1,8 +1,8 @@
-Passo a passo para que o programa seja inicializado automaticamente (dois jeitos):
+Passo a passo para que o programa seja inicializado automaticamente em Windows (dois jeitos):
 
 Jeito 1)  - Criar um arquivo de atalho do RegistroDeUso.py
     	  - Associar o python.exe para abrir as extensões .py
-	    - Ex.: Execut�vel em "C:\Users\gpenello\Miniconda3\python.exe"
+	    - Ex.: Executável em "C:\Users\gpenello\Miniconda3\python.exe"
           - Copiar o atalho gerado anteriormente (ex. "RegistroDeUso.pyw - Shortcut") para a pasta de Startup
 	  - Pasta geral do Windows: "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\"
 
@@ -15,21 +15,25 @@ pause
 	  - Pasta geral do Windows: "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\"
 
 
-Instalar AutoHotKey para desabilitar os comandos alt+tab e windows+tab dos teclados
+Instalar AutoHotKey para desabilitar os comandos alt+tab, windows+tab e CTRL+Esc dos teclados
+ - https://www.autohotkey.com/
 
-Para alterar a senha do administrador, rodar o arquivo "criptografarPassword.py".
-Para minimizar a tela, use o nome 'admin' como usuário e a senha do administrador como password.
+
+Ajeite as variáveis "TelaCheia" e "equipamento" antes de rodar o programa e coloque o caminho completo do programa que quer que abra ao fazer o login:
+Exemplo:
+    equipamento = 'LaserCutter' 
+    TelaCheia = True
+    software_externo_path = '/home/pi/Documents/registro-de-uso-presenca-lab/K40_Whisperer-0.37_src/k40_whisperer.py'
+
+
+Com "TelaCheia = True", fica praticamente impossível de fechar o programa sem ser usuário cadastrado (se descobrir uma forma, me avise!). :) 
 
 A única maneira de fechar o programa é usando o gerenciador de tarefas para fechar o terminal de python que está rodando o programa. Se descobrir outra forma, me avise. :)
 A ideia é realmente dificultar fechar o programa. Só é para fazer isso caso realmente desejado pelo usuário.
 
+(Não precisa mais fazer esse passo. Primeiro uso do programa cria botão para criar administrador) Para alterar a senha do administrador, rodar o arquivo "criptografarPassword.py". 
 
-Ajeite as variáveis "TelaCheia" e "equipamento" antes de rodar o programa. 
-TelaCheia = True/False --> escolha um dos dois
-equipamento = "Nome do equipamento desejado"
-
-Com "TelaCheia = True", fica praticamente impossível de fechar o programa sem ser usuário cadastrado (se descobrir uma forma, me avise!). 
-
+(Agora existem outras formas de fazer isso.) Para minimizar a tela, use o nome 'admin' como usuário e a senha do administrador como password.
 
 G. M. Penello, 2019
 gpenello@gmail.com

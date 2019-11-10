@@ -20,6 +20,12 @@ GUI_path = os.path.join(dir_path, 'GUI')
 img_path = os.path.join(dir_path, 'imagens')
 log_path = os.path.join(dir_path, 'log')
 
+if platform == "linux" or platform == "linux2":
+    subprocess.Popen(['xmodmap', '.Xmodmap_disable'])
+elif platform == "win32":
+    subprocess.Popen(['C:\\Program Files\\AutoHotkey\\AutoHotkey.exe', 'autoHotKey_disable.aht'])
+
+
 class DesignerMainWindow(QMainWindow):
 
     equipamento = 'LaserCutter'  # colocar o nome do equipamento do arquivo db
@@ -48,6 +54,7 @@ class DesignerMainWindow(QMainWindow):
         # if self.servidorFTP is True:
         #     self.baixar_db_usuarios()
         # self.db_usuario = BancoDeDados("./log/BancoDeDados_Usuarios.db")
+
         arquivo = os.path.join(log_path, "BancoDeDados_Local_" + self.equipamento + ".db")
         self.db = BancoDeDados(arquivo)
 
@@ -83,9 +90,6 @@ class DesignerMainWindow(QMainWindow):
 
         if platform == "linux" or platform == "linux2":
             self.software_externo = subprocess.Popen(['sudo', 'python3', self.software_externo_path])
-            subprocess.Popen(['xmodmap', '.Xmodmap_disable'])
-        elif platform == "win32":
-            subprocess.Popen(['C:\\Program Files\\AutoHotkey\\AutoHotkey.exe', 'autoHotKey_disable.aht'])
 
         admin = self.db.check_admin()  
             
