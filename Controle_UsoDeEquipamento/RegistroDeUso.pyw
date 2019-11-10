@@ -9,6 +9,7 @@ import os
 import subprocess
 import signal
 from sys import platform
+import urllib.request as urllib2
 
 
 import criptografarPassword as cript
@@ -24,6 +25,7 @@ if platform == "linux" or platform == "linux2":
     subprocess.Popen(['xmodmap', '.Xmodmap_disable'])
 elif platform == "win32":
     subprocess.Popen(['C:\\Program Files\\AutoHotkey\\AutoHotkey.exe', 'autoHotKey_disable.aht'])
+
 
 
 class DesignerMainWindow(QMainWindow):
@@ -80,6 +82,7 @@ class DesignerMainWindow(QMainWindow):
 
         self.btn_ok.clicked.connect(self.get_login_pass)
         self.btn_power.clicked.connect(self.shutdown)
+        self.btn_update.clicked.connect(self.git_bitbucket)
         if self.servidorFTP is True:
             self.btn_novo.setEnabled(False)
         # self.btn_sair.clicked.connect(self.fechar)
@@ -96,6 +99,14 @@ class DesignerMainWindow(QMainWindow):
         if admin != []:
             self.btn_novo_admin.deleteLater()
         
+    def is_online(self):
+        try:
+            urllib2.urlopen('http://www.google.com', timeout=1)
+            return True
+        except urllib2.URLError:
+            return False
+
+
     def cadastrarNovoAdmin(self):
         self.keep_minimized()
         self.novoAdmin.show()
@@ -103,6 +114,25 @@ class DesignerMainWindow(QMainWindow):
         if platform == "linux" or platform == "linux2":
             subprocess.Popen(['xmodmap', '.Xmodmap_enable'])
     
+    def git_bitbucket(self):
+        reply = QMessageBox.question(self, 'Download...',
+                                        'Fazer update do programa?', QMessageBox.Yes,
+                                        QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            if is_online():
+                subprocess.Popen(['git', 'pull', 'origin', 'master'])
+
+                QMessageBox.about(
+                    self, "Reinicie o computador",
+                    "Reinicie o computador para qua as mudanças sejam efetivadas."
+                )
+            else:
+                QMessageBox.about(
+                    self, "Sem conexão com a internet.",
+                    "Conecte à internet e clique novamente para atualizar o programa."
+                )
+
+
     def shutdown(self):
         reply = QMessageBox.question(self, 'Desligando...',
                                         'Desligar o computador?', QMessageBox.Yes,
