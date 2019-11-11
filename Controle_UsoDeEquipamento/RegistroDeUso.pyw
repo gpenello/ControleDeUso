@@ -205,15 +205,7 @@ class DesignerMainWindow(QMainWindow):
             dados_admin = self.db.check_admin()
             senha = dados_admin[5]
 
-            if cript.check_password(senha, senha_autorizacao):
-                self.keep_minimized()
-                self.historicoDeUso.popular_combobox()
-                self.historicoDeUso.show()
-                self.historicoDeUso.activateWindow()
-                if platform == "linux" or platform == "linux2":
-                    subprocess.Popen(['xmodmap', '.Xmodmap_enable'])
-
-            elif cript.check_autorizacao(senha_autorizacao):
+            if cript.check_password(senha, senha_autorizacao) or cript.check_autorizacao(senha_autorizacao):
                 self.keep_minimized()
                 self.historicoDeUso.popular_combobox()
                 self.historicoDeUso.show()
@@ -234,15 +226,7 @@ class DesignerMainWindow(QMainWindow):
             senha = dados_admin[5]
             #print(dados_admin)
 
-            if cript.check_password(senha, senha_autorizacao):
-                self.keep_minimized()
-                self.todosUsuarios.popular_combobox()
-                self.todosUsuarios.show()
-                self.todosUsuarios.activateWindow()
-                if platform == "linux" or platform == "linux2":
-                    subprocess.Popen(['xmodmap', '.Xmodmap_enable'])
-
-            elif cript.check_autorizacao(senha_autorizacao):
+            if cript.check_password(senha, senha_autorizacao) or cript.check_autorizacao(senha_autorizacao):
                 self.keep_minimized()
                 self.todosUsuarios.popular_combobox()
                 self.todosUsuarios.show()
@@ -263,20 +247,12 @@ class DesignerMainWindow(QMainWindow):
             dados_admin = self.db.check_admin()
             senha = dados_admin[5]
 
-            if cript.check_password(senha, senha_autorizacao):
+            if cript.check_password(senha, senha_autorizacao) or cript.check_autorizacao(senha_autorizacao):
                 self.keep_minimized()
                 self.novoUsuario.show()
                 self.novoUsuario.activateWindow()
                 if platform == "linux" or platform == "linux2":
                     subprocess.Popen(['xmodmap', '.Xmodmap_enable'])
-
-            elif cript.check_autorizacao(senha_autorizacao):
-                self.keep_minimized()
-                self.novoUsuario.show()
-                self.novoUsuario.activateWindow()
-                if platform == "linux" or platform == "linux2":
-                    subprocess.Popen(['xmodmap', '.Xmodmap_enable'])
-
             else:
                 QMessageBox.about(self, "Erro!",
                                   "Senha de autorização não confere!")
@@ -421,12 +397,9 @@ class TelaTodosUsuarios(QMainWindow):
             QtWidgets.QLineEdit.Password)
 
         if ok:
-            dados_admin = self.db.check_admin()
+            dados_admin = self.janelaPrincipal.db.check_admin()
             senha = dados_admin[5]
-            if cript.check_password(senha, senha_autorizacao):
-                self.janelaPrincipal.db.remove_usuario_por_login(login)
-                QMessageBox.about(self, "OK!", login + " removido do banco de dados!")
-            elif cript.check_autorizacao(senha_autorizacao):
+            if cript.check_password(senha, senha_autorizacao) or cript.check_autorizacao(senha_autorizacao):
                 self.janelaPrincipal.db.remove_usuario_por_login(login)
                 QMessageBox.about(self, "OK!", login + " removido do banco de dados!")
             else:
@@ -771,7 +744,9 @@ class NovoUsuario(QMainWindow):
                 self, "Aguardando autorização...", "Senha de autorização:",
                 QtWidgets.QLineEdit.Password)
             if ok:
-                if cript.check_autorizacao(senha_autorizacao):
+                dados_admin = self.janelaPrincipal.db.check_admin()
+                senha = dados_admin[5]
+                if cript.check_password(senha, senha_autorizacao) or cript.check_autorizacao(senha_autorizacao):
                     if dados != []:
                         self.janelaPrincipal.db.remove_usuario_para_recadastro(login)
 
