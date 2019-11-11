@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #%%
 from PyQt5 import uic, QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMainWindow, QApplication, QInputDialog, QMessageBox, QDesktopWidget, QSplashScreen
+from PyQt5.QtWidgets import QMainWindow, QApplication, QInputDialog, QMessageBox, QDesktopWidget, QSplashScreen, QFileDialog
 import sys
 import time
 import os
@@ -30,11 +30,9 @@ elif platform == "win32":
 
 class DesignerMainWindow(QMainWindow):
 
-    equipamento = 'LaserCutter'  # colocar o nome do equipamento do arquivo db
-    TelaCheia = True
+    equipamento = 'LaserCutter'  
+    telaCheia = True
     software_externo_path = '/home/pi/Documents/registro-de-uso-presenca-lab/K40_Whisperer-0.37_src/k40_whisperer.py'
-    servidorFTP = False
-    host, user, senha = ('raspberrypi.local', 'pi', 'lab2')
     
 
     # -----------------------------------------------
@@ -44,6 +42,8 @@ class DesignerMainWindow(QMainWindow):
 
     # ------------------------------------------------------
     # Ainda não testado completamente
+    servidorFTP = False
+    host, user, senha = ('raspberrypi.local', 'pi', 'lab2')
     forcar_presenca = False
 
     # -----------------------------------------------
@@ -64,6 +64,18 @@ class DesignerMainWindow(QMainWindow):
         self.todosUsuarios = TelaTodosUsuarios(self)
         self.historicoDeUso = TelaHistoricoDeUso(self)
         self.novoAdmin = NovoAdmin(self)
+
+        admin = self.db.check_admin()  
+        self.equipamento = self.db.check_variavel('equipamento')  
+        self.software_externo_path = self.db.check_variavel('progExterno')  
+        self.telaCheia = self.db.check_variavel('telaCheia')  
+        if self.telaCheia == 'True':
+            self.telaCheia = True
+        else:
+            self.telaCheia = False    
+
+        if admin != []:
+            self.btn_novo_admin.deleteLater()
 
         # def callback(event):
         #     print(event.name)
@@ -94,10 +106,7 @@ class DesignerMainWindow(QMainWindow):
         if platform == "linux" or platform == "linux2":
             self.software_externo = subprocess.Popen(['sudo', 'python3', self.software_externo_path])
 
-        admin = self.db.check_admin()  
-            
-        if admin != []:
-            self.btn_novo_admin.deleteLater()
+
         
     def is_online(self):
         try:
@@ -227,9 +236,9 @@ class DesignerMainWindow(QMainWindow):
 
             if cript.check_password(senha, senha_autorizacao):
                 self.keep_minimized()
-                self.historicoDeUso.popular_combobox()
-                self.historicoDeUso.show()
-                self.historicoDeUso.activateWindow()
+                self.todosUsuarios.popular_combobox()
+                self.todosUsuarios.show()
+                self.todosUsuarios.activateWindow()
                 if platform == "linux" or platform == "linux2":
                     subprocess.Popen(['xmodmap', '.Xmodmap_enable'])
 
@@ -256,9 +265,8 @@ class DesignerMainWindow(QMainWindow):
 
             if cript.check_password(senha, senha_autorizacao):
                 self.keep_minimized()
-                self.historicoDeUso.popular_combobox()
-                self.historicoDeUso.show()
-                self.historicoDeUso.activateWindow()
+                self.novoUsuario.show()
+                self.novoUsuario.activateWindow()
                 if platform == "linux" or platform == "linux2":
                     subprocess.Popen(['xmodmap', '.Xmodmap_enable'])
 
@@ -342,7 +350,7 @@ class DesignerMainWindow(QMainWindow):
             if self.permitir_min is True:
                 self.showMinimized()
             else:
-                if self.TelaCheia is True:
+                if self.telaCheia is True:
                     self.showFullScreen()
                 else:
                     self.showNormal()
@@ -457,7 +465,7 @@ class TelaTodosUsuarios(QMainWindow):
         self.lbl_grupo.setText("")
 
         self.janelaPrincipal.permitir_min = False
-        if self.janelaPrincipal.TelaCheia is True:
+        if self.janelaPrincipal.telaCheia is True:
             self.janelaPrincipal.showFullScreen()
         else:
             self.janelaPrincipal.showNormal()
@@ -715,7 +723,7 @@ class TelaHistoricoDeUso(QMainWindow):
 
 
         self.janelaPrincipal.permitir_min = False
-        if self.janelaPrincipal.TelaCheia is True:
+        if self.janelaPrincipal.telaCheia is True:
             self.janelaPrincipal.showFullScreen()
         else:
             self.janelaPrincipal.showNormal()
@@ -794,7 +802,7 @@ class NovoUsuario(QMainWindow):
 
     def closeEvent(self, event):
         self.janelaPrincipal.permitir_min = False
-        if self.janelaPrincipal.TelaCheia is True:
+        if self.janelaPrincipal.telaCheia is True:
             self.janelaPrincipal.showFullScreen()
         else:
             self.janelaPrincipal.showNormal()
@@ -815,21 +823,36 @@ class NovoAdmin(QMainWindow):
         self.txt_password_2.returnPressed.connect(self.get_login_pass)
         self.btn_sair.clicked.connect(self.close)
         self.btn_ok.clicked.connect(self.get_login_pass)
+        self.btn_selectFile.clicked.connect(self.get_progExt)
+        
+    def get_progExt(self):
+        fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*)")
+        if fileName:
+            self.txt_progExterno.setText(fileName)
 
     def get_login_pass(self):
         nome = self.txt_nome.text()
         email = self.txt_email.text()
         password = self.txt_password.text()
         password2 = self.txt_password_2.text()
+        equipamento = self.txt_equipamento.text()
+        telaCheia = self.cbx_TelaCheia.isChecked()
+        progExt = self.txt_progExterno.text()
         self.txt_nome.setText('')
         self.txt_email.setText('')
         self.txt_password.setText('')   
         self.txt_password_2.setText('')
+        self.txt_equipamento.setText('')
+        self.txt_progExterno.setText('')
         
         if nome != "" and password == password2:
             password = cript.hash_password(password)
 
             self.janelaPrincipal.db.add_novo_admin(nome, email, password)
+            self.janelaPrincipal.db.add_variavel('equipamento', equipamento)
+            self.janelaPrincipal.db.add_variavel('telaCheia', str(telaCheia))
+            self.janelaPrincipal.db.add_variavel('progExterno', progExt)          
+            
             ok = QMessageBox.about(self, "OK!", "Novo administrador cadastrado!")
             self.janelaPrincipal.btn_novo_admin.deleteLater()
             self.close()
@@ -843,7 +866,7 @@ class NovoAdmin(QMainWindow):
 
     def closeEvent(self, event):
         self.janelaPrincipal.permitir_min = False
-        if self.janelaPrincipal.TelaCheia is True:
+        if self.janelaPrincipal.telaCheia is True:
             self.janelaPrincipal.showFullScreen()
         else:
             print('false')
@@ -933,7 +956,7 @@ class TempoUso(QMainWindow):
             self.tempo_de_uso = 0
             self.janelaPrincipal.permitir_min = False
             time.sleep(1)
-            if self.janelaPrincipal.TelaCheia is True:
+            if self.janelaPrincipal.telaCheia is True:
                 self.janelaPrincipal.showFullScreen()
             else:
                 self.janelaPrincipal.showNormal()
@@ -962,7 +985,7 @@ if __name__ == "__main__":
 
     dmw = DesignerMainWindow()
 
-    if dmw.TelaCheia is True:
+    if dmw.telaCheia is True:
         dmw.showFullScreen()
     else:
         dmw.showNormal()
