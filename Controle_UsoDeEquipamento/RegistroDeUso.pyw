@@ -232,7 +232,7 @@ class DesignerMainWindow(QMainWindow):
         if ok:
             dados_admin = self.db.check_admin()
             senha = dados_admin[5]
-            print(dados_admin)
+            #print(dados_admin)
 
             if cript.check_password(senha, senha_autorizacao):
                 self.keep_minimized()
@@ -787,7 +787,7 @@ class NovoUsuario(QMainWindow):
                     self.txt_login.setText(login)
                     self.txt_nome.setText(nome)
                     self.txt_email.setText(email)
-                    self.txt_grupo.setText(grupo)
+                    self.txt_grupoPesq.setText(grupo)
                     self.txt_password.setText(password2)
                     self.txt_password_2.setText(password2)
 
@@ -869,7 +869,6 @@ class NovoAdmin(QMainWindow):
         if self.janelaPrincipal.telaCheia is True:
             self.janelaPrincipal.showFullScreen()
         else:
-            print('false')
             self.janelaPrincipal.showNormal()
         self.janelaPrincipal.activateWindow()
         self.janelaPrincipal.txt_login.setFocus()
