@@ -92,7 +92,8 @@ class DesignerMainWindow(QMainWindow):
         # self.installEventFilter(AltTab())
 
         if platform == "linux" or platform == "linux2":
-            self.software_externo = subprocess.Popen(['sudo', 'python3', self.software_externo_path])
+            if self.software_externo_path:
+                self.software_externo = subprocess.Popen(['sudo', 'python3', self.software_externo_path])
 
         admin = self.db.check_admin()  
             
@@ -335,7 +336,8 @@ class DesignerMainWindow(QMainWindow):
     def abrir_software_externo(self):
         if self.software_externo.poll() != None:
             if platform == "linux" or platform == "linux2":
-                self.software_externo = subprocess.Popen(['sudo', 'python3', self.software_externo_path])
+                if self.software_externo_path:
+                    self.software_externo = subprocess.Popen(['sudo', 'python3', self.software_externo_path])
 
     def changeEvent(self, e):
         if e.type() == e.WindowStateChange:
