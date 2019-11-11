@@ -48,6 +48,15 @@ class BancoDeDados():
         except Error as e:
             print(e)        
 
+    def create_table_variaveis(self):
+        nova_tabela = "CREATE TABLE IF NOT EXISTS variaveis(id INTEGER PRIMARY " +\
+            "KEY, variavel TEXT UNIQUE, valor TEXT UNIQUE)"
+        try:
+            c = self.conn.cursor()
+            c.execute(nova_tabela)
+        except Error as e:
+            print(e)        
+
     def create_table_usuarios(self):
         nova_tabela = "CREATE TABLE IF NOT EXISTS usuarios(id INTEGER PRIMARY " +\
             "KEY, tag TEXT UNIQUE, login TEXT UNIQUE, nome TEXT UNIQUE, email TEXT, adicionado_por TEXT, " +\
@@ -108,6 +117,7 @@ class BancoDeDados():
                 self.create_table_usuarios()  # criando tabela usuarios
                 self.create_table_usuarios_antigos()  # criando tabela usuarios antigos
                 self.create_table_admin()
+                self.create_table_variaveis()
                 self.create_table_autorizacao_equip()  # tabela de autorizacoes
                 # criando controle de uso de equip.
                 self.create_table_uso_equip()
@@ -177,6 +187,16 @@ class BancoDeDados():
         try:
             cur = self.conn.cursor()
             cur.execute("SELECT * FROM presenca")
+            rows = cur.fetchall()
+            return rows
+        except Error as e:
+            print(e)
+
+
+    def check_tabela_variaveis(self):
+        try:
+            cur = self.conn.cursor()
+            cur.execute("SELECT * FROM variaveis")
             rows = cur.fetchall()
             return rows
         except Error as e:
@@ -304,6 +324,19 @@ class BancoDeDados():
             print(e)
             return False
 
+    def add_variavel(self,variavel_txt, valor):
+        try:
+            sql = "INSERT INTO variaveis(variavel, valor) VALUES(?,?)"
+            cur = self.conn.cursor()
+            cur.execute(sql, (variavel_txt, valor))
+            self.conn.commit()
+            return True
+        except Error as e:
+            print(e)
+            return False
+
+
+
 
     def add_novo_usuario(self,
                          tag_novo,
@@ -390,6 +423,16 @@ class BancoDeDados():
     #     except Error as e:
     #         print(e)
 
+    def check_variavel(self, variavel_txt):
+        try:
+            cur = self.conn.cursor()
+            cur.execute("SELECT valor FROM variaveis WHERE variavel=?", (variavel_txt, ))
+            row = cur.fetchall()
+            if row == []:
+                return row
+            return row[0][0]
+        except Error as e:
+            print(e)
 
     def check_admin(self):
         try:
