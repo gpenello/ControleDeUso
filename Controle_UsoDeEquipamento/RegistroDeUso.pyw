@@ -129,10 +129,10 @@ class DesignerMainWindow(QMainWindow):
                                         QMessageBox.No)
         if reply == QMessageBox.Yes:
             if self.is_online():
-                subprocess.Popen(['git', 'pull', 'origin', 'master'])
-
+                p = subprocess.Popen(['git', 'pull', 'origin', 'master'], stdout=subprocess.PIPE)
+                result = p.communicate()[0]
                 QMessageBox.about(
-                    self, "Reinicie o computador",
+                    self, "Reinicie o computador", result.decode("utf-8")  + '\r\n' +
                     "Reinicie o computador para qua as mudanças sejam efetivadas."
                 )
             else:
