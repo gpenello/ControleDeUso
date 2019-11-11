@@ -832,6 +832,7 @@ class NovoAdmin(QMainWindow):
             
             ok = QMessageBox.about(self, "OK!", "Novo administrador cadastrado!")
             self.janelaPrincipal.btn_novo_admin.deleteLater()
+            self.janelaPrincipal.telaCheia=telaCheia
             self.close()
 
         else:
