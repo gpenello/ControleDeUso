@@ -1,0 +1,11 @@
+[Unit]
+ Description=Controle de Uso
+ After=multi-user.target
+
+ [Service]
+ Type=idle
+# ExecStart=/usr/bin/python3 home/pi/Documents/Controle_presencaLab/RegistroDePresenca.py 
+ ExecStart=/home/pi/start_python.sh 
+
+ [Install]
+ WantedBy=multi-user.target

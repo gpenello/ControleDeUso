@@ -32,7 +32,7 @@ class DesignerMainWindow(QMainWindow):
 
     equipamento = 'LaserCutter'  
     telaCheia = True
-    software_externo_path = '/home/pi/Documents/registro-de-uso-presenca-lab/K40_Whisperer-0.37_src/k40_whisperer.py'
+    software_externo_path = '/home/pi/Documents/registro-de-uso-presenca-lab/K40_Whisperer-0.38_src/k40_whisperer.py'
     
 
     # -----------------------------------------------
