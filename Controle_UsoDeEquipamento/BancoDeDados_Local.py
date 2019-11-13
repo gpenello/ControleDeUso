@@ -50,7 +50,7 @@ class BancoDeDados():
 
     def create_table_variaveis(self):
         nova_tabela = "CREATE TABLE IF NOT EXISTS variaveis(id INTEGER PRIMARY " +\
-            "KEY, variavel TEXT UNIQUE, valor TEXT UNIQUE)"
+            "KEY, variavel TEXT UNIQUE, valor TEXT)"
         try:
             c = self.conn.cursor()
             c.execute(nova_tabela)

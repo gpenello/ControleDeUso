@@ -30,10 +30,11 @@ elif platform == "win32":
 
 class DesignerMainWindow(QMainWindow):
 
-    equipamento = 'LaserCutter'  
-    telaCheia = True
-    software_externo_path = '/home/pi/Documents/registro-de-uso-presenca-lab/K40_Whisperer-0.38_src/k40_whisperer.py'
+
     
+    equipamento = ""   
+    telaCheia = None
+    software_externo_path = ""
 
     # -----------------------------------------------
     # IMPORTANTE: FALTA INTEGRAR OS BANCOS DE DADOS LOCAIS COM O DO RPi de presença com tag RFID.
@@ -57,7 +58,7 @@ class DesignerMainWindow(QMainWindow):
         #     self.baixar_db_usuarios()
         # self.db_usuario = BancoDeDados("./log/BancoDeDados_Usuarios.db")
 
-        arquivo = os.path.join(log_path, "BancoDeDados_Local_" + self.equipamento + ".db")
+        arquivo = os.path.join(log_path, "BancoDeDados_Local.db")
         self.db = BancoDeDados(arquivo)
 
         self.novoUsuario = NovoUsuario(self)
@@ -66,9 +67,11 @@ class DesignerMainWindow(QMainWindow):
         self.novoAdmin = NovoAdmin(self)
 
         admin = self.db.check_admin()  
+
         self.equipamento = self.db.check_variavel('equipamento')  
         self.software_externo_path = self.db.check_variavel('progExterno')  
         self.telaCheia = self.db.check_variavel('telaCheia')  
+
         if self.telaCheia == 'True':
             self.telaCheia = True
         else:
@@ -104,7 +107,10 @@ class DesignerMainWindow(QMainWindow):
         # self.installEventFilter(AltTab())
 
         if platform == "linux" or platform == "linux2":
-            self.software_externo = subprocess.Popen(['sudo', 'python3', self.software_externo_path])
+            if self.software_externo_path:
+                diretorio = os.path.dirname(self.software_externo_path)
+                programa = os.path.basename(self.software_externo_path)
+                self.software_externo = subprocess.Popen(['sudo', 'python3', programa], cwd=diretorio )
 
 
         
@@ -170,7 +176,7 @@ class DesignerMainWindow(QMainWindow):
 
     def reload_db(self):
         self.db.fechar_conn()
-        arquivo = "./log/BancoDeDados_Local_" + self.equipamento + ".db"
+        arquivo = "./log/BancoDeDados_Local.db"
         self.db = BancoDeDados(arquivo)
 
     def enviar_db_local_FTP(self):
@@ -181,7 +187,7 @@ class DesignerMainWindow(QMainWindow):
             if 'Registros de uso\n' not in cliente.stdout.readlines():
                 cliente.executar_comando('mkdir "Registros de uso"')
                 print("Pasta 'Registros de uso' criada no RPi.")
-            arquivo = "BancoDeDados_Local_" + self.equipamento + ".db"
+            arquivo = "BancoDeDados_Local.db"
             cliente.enviar_arquivo("./log/" + arquivo,
                                    'Registros de uso/' + arquivo)
             cliente.fechar_cliente()
@@ -319,8 +325,11 @@ class DesignerMainWindow(QMainWindow):
     def abrir_software_externo(self):
         if self.software_externo.poll() != None:
             if platform == "linux" or platform == "linux2":
-                self.software_externo = subprocess.Popen(['sudo', 'python3', self.software_externo_path])
-
+                if self.software_externo_path:
+                    diretorio = os.path.dirname(self.software_externo_path)
+                    programa = os.path.basename(self.software_externo_path)
+                    self.software_externo = subprocess.Popen(['sudo', 'python3', programa], cwd=diretorio )
+                    
     def changeEvent(self, e):
         if e.type() == e.WindowStateChange:
             if self.permitir_min is True:
@@ -377,11 +386,13 @@ class TelaTodosUsuarios(QMainWindow):
     def popular_combobox(self):
         self.cbx_logins.clear()
         self.cbx_logins.addItem("Selecione o usuário:")
-        todos_usuarios = self.janelaPrincipal.db.check_todos_usuarios_do_equip(self.janelaPrincipal.equipamento)
-        self.cbx_logins.addItems(todos_usuarios)
-        todos_superusuarios = self.janelaPrincipal.db.check_todos_superusuarios_do_equip('self.janelaPrincipal.equipamento')
-        self.cbx_logins.addItems(todos_superusuarios)
-
+        try:
+            todos_usuarios = self.janelaPrincipal.db.check_todos_usuarios_do_equip(self.janelaPrincipal.equipamento)
+            self.cbx_logins.addItems(todos_usuarios)
+            todos_superusuarios = self.janelaPrincipal.db.check_todos_superusuarios_do_equip('self.janelaPrincipal.equipamento')
+            self.cbx_logins.addItems(todos_superusuarios)
+        except TypeError as e:
+            print(e)
 
     def remover_usuario(self):
         
@@ -830,6 +841,7 @@ class NovoAdmin(QMainWindow):
             
             ok = QMessageBox.about(self, "OK!", "Novo administrador cadastrado!")
             self.janelaPrincipal.btn_novo_admin.deleteLater()
+            self.janelaPrincipal.telaCheia=telaCheia
             self.close()
 
         else:
