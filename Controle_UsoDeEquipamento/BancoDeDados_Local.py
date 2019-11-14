@@ -606,23 +606,24 @@ class BancoDeDados():
 
 
 
-    def add_autorizacao_equip(self, login, nome, equipamento, super="False"):
+    def add_autorizacao_equip(self, login, nome, equipamento, superusuario="False"):
         try:
             sql = "INSERT INTO autorizacao_equip(login, nome, equipamento, super) VALUES(?,?,?,?)"
             cur = self.conn.cursor()
-            cur.execute(sql, (login, nome, equipamento, super))
+            cur.execute(sql, (login, nome, equipamento, superusuario))
             self.conn.commit()
             print('adicionado na linha ' + str(cur.lastrowid))
             return True
         except Error as e:
+            print(login, nome, equipamento, superusuario)
             print(e)
             return False
 
-    def add_autorizacao_nome_equip(self, nome, equipamento, super="False"):
+    def add_autorizacao_nome_equip(self, nome, equipamento, superusuario="False"):
         try:
             sql = "INSERT INTO autorizacao_equip(nome, equipamento, super) VALUES(?,?,?)"
             cur = self.conn.cursor()
-            cur.execute(sql, (nome, equipamento, super))
+            cur.execute(sql, (nome, equipamento, superusuario))
             self.conn.commit()
             print('adicionado na linha ' + str(cur.lastrowid))
             return True
@@ -630,11 +631,11 @@ class BancoDeDados():
             print(e)
             return False
 
-    def add_autorizacao_login_equip(self, login, equipamento, super="False"):
+    def add_autorizacao_login_equip(self, login, equipamento, superusuario="False"):
         try:
             sql = "INSERT INTO autorizacao_equip(login, equipamento, super) VALUES(?,?,?)"
             cur = self.conn.cursor()
-            cur.execute(sql, (login, equipamento, super))
+            cur.execute(sql, (login, equipamento, superusuario))
             self.conn.commit()
             print('adicionado na linha ' + str(cur.lastrowid))
             return True

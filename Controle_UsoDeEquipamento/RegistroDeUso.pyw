@@ -33,7 +33,7 @@ class DesignerMainWindow(QMainWindow):
 
     
     equipamento = ""   
-    telaCheia = None
+    telaCheia = True
     software_externo_path = ""
 
     # -----------------------------------------------
@@ -78,8 +78,7 @@ class DesignerMainWindow(QMainWindow):
             self.telaCheia = False    
 
         if admin != []:
-            self.btn_novo_admin.deleteLater()
-
+            self.cadastrarNovoAdmin()
         # def callback(event):
         #     print(event.name)
         #     print(event.scan_code)  #125 - windows key, tab - 15, alt - 56
@@ -93,7 +92,6 @@ class DesignerMainWindow(QMainWindow):
         self.btn_novo.clicked.connect(self.cadastrarNovoUsuario)
         self.btn_usuarios.clicked.connect(self.verTodosUsuarios)
         self.btn_tempo.clicked.connect(self.verHistoricoDeUso)
-        self.btn_novo_admin.clicked.connect(self.cadastrarNovoAdmin)
 
         self.btn_ok.clicked.connect(self.get_login_pass)
         self.btn_power.clicked.connect(self.shutdown)
@@ -477,9 +475,16 @@ class TelaHistoricoDeUso(QMainWindow):
         self.cbx_logins.addItem("Selecione o usuário:")
         self.cbx_logins.addItem("Todos os usuarios")
         todos_usuarios = self.janelaPrincipal.db.check_todos_usuarios_do_equip(self.janelaPrincipal.equipamento)
-        self.cbx_logins.addItems(todos_usuarios)
+        if None in todos_usuarios:
+            pass
+        else:
+            self.cbx_logins.addItems(todos_usuarios)
+        
         todos_superusuarios = self.janelaPrincipal.db.check_todos_superusuarios_do_equip(self.janelaPrincipal.equipamento)
-        self.cbx_logins.addItems(todos_superusuarios)    
+        if None in todos_superusuarios:
+            pass
+        else:    
+            self.cbx_logins.addItems(todos_superusuarios)    
 
 
         self.cbx_grupos.clear()
@@ -850,15 +855,17 @@ class NovoAdmin(QMainWindow):
             self.txt_email.setText(email)
 
 
-
     def closeEvent(self, event):
-        self.janelaPrincipal.permitir_min = False
-        if self.janelaPrincipal.telaCheia is True:
-            self.janelaPrincipal.showFullScreen()
-        else:
-            self.janelaPrincipal.showNormal()
-        self.janelaPrincipal.activateWindow()
-        self.janelaPrincipal.txt_login.setFocus()
+
+        reply = QMessageBox.question(self, 'Desligando...',
+                                        'O computador precisa ser reiniciado para que as mudanças façam efeito. Reiniciar agora?', QMessageBox.Yes,
+                                        QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            if platform == "linux" or platform == "linux2":
+                subprocess.Popen(['sudo', 'shutdown', '-h', 'now'])
+            elif platform == "win32":
+                QMessageBox.about(self, "Desligando...","Este comando funciona apenas em Linux.")
+
 
 
 class TempoUso(QMainWindow):

@@ -302,7 +302,7 @@ Qualquer dúvida / erro / comentário falar com Germano (gpenello@if.ufrj.br)</s
         <property name="sizeHint" stdset="0">
          <size>
           <width>20</width>
-          <height>40</height>
+          <height>20</height>
          </size>
         </property>
        </spacer>
@@ -454,25 +454,6 @@ QPushButton:pressed {
            </size>
           </property>
          </spacer>
-        </item>
-        <item>
-         <widget class="QPushButton" name="btn_novo_admin">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>70</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Novo admin</string>
-          </property>
-         </widget>
         </item>
         <item>
          <widget class="QPushButton" name="btn_tempo">
