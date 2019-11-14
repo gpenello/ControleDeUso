@@ -77,8 +77,6 @@ class DesignerMainWindow(QMainWindow):
         else:
             self.telaCheia = False    
 
-        if admin != []:
-            self.cadastrarNovoAdmin()
         # def callback(event):
         #     print(event.name)
         #     print(event.scan_code)  #125 - windows key, tab - 15, alt - 56
@@ -110,6 +108,8 @@ class DesignerMainWindow(QMainWindow):
                 programa = os.path.basename(self.software_externo_path)
                 self.software_externo = subprocess.Popen(['sudo', 'python3', programa], cwd=diretorio )
 
+        if admin == []:
+            self.cadastrarNovoAdmin()
 
         
     def is_online(self):
@@ -845,7 +845,6 @@ class NovoAdmin(QMainWindow):
             self.janelaPrincipal.db.add_variavel('progExterno', progExt)          
             
             ok = QMessageBox.about(self, "OK!", "Novo administrador cadastrado!")
-            self.janelaPrincipal.btn_novo_admin.deleteLater()
             self.janelaPrincipal.telaCheia=telaCheia
             self.close()
 
@@ -862,7 +861,7 @@ class NovoAdmin(QMainWindow):
                                         QMessageBox.No)
         if reply == QMessageBox.Yes:
             if platform == "linux" or platform == "linux2":
-                subprocess.Popen(['sudo', 'shutdown', '-h', 'now'])
+                subprocess.Popen(['sudo', 'reboot'])
             elif platform == "win32":
                 QMessageBox.about(self, "Desligando...","Este comando funciona apenas em Linux.")
 
