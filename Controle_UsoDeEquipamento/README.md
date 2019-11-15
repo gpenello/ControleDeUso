@@ -6,21 +6,29 @@ Utilize esse programa para criar um banco de dados contendo registro de usuário
 
 Ao rodar o programa pela primeira vez, será realizado o cadastro do administrador do programa.
 
+Com checkbox TelaCheia selecionado, fica praticamente impossível de fechar o programa sem ser usuário cadastrado (se descobrir uma forma, me avise!). :) 
 
-Com "TelaCheia = True", fica praticamente impossível de fechar o programa sem ser usuário cadastrado (se descobrir uma forma, me avise!). :) 
-
-A única maneira de fechar o programa é usando o gerenciador de tarefas para fechar o terminal de python que está rodando o programa. Se descobrir outra forma, me avise. :)
-A ideia é realmente dificultar fechar o programa. Só é para fazer isso caso realmente desejado pelo usuário.
+A ideia é realmente dificultar fechar o programa. 
 
 ## (RPI) Passo a passo para que o programa seja inicializado automaticamente:
-- 
+- Ajeitar o caminho do arquivo "start_python.sh" nas linhas 2 e 3
+  Ex.:
+```
+cd /home/pi/Documents/registro-de-uso-presenca-lab/Controle_UsoDeEquipamento
+/usr/bin/python3 RegistroDeUso.py
+```          
+- Ajeitar o caminho do arquivo "RegistroDeUso.service" na linha 7
+  Ex.:
+```
+ ExecStart=/home/pi/start_python.sh 
+```          
 
 ## (Windows) Passo a passo para que o programa seja inicializado automaticamente:
 Escolha um dos dois jeitos abaixo:
 ### Jeito 1
-  - Criar um arquivo de atalho do RegistroDeUso.pyw
+
   - Associar o pythonw.exe para abrir as extensões .pyw
-  - Copiar o atalho gerado anteriormente (ex. "RegistroDeUso.pyw - Shortcut") para a pasta de Startup
+  - Após cadastrar o Administrador, copiar o arquivo "RegistroDeUso - Atalho" para a pasta de Startup
   - Ex.: 
    - Executável em "C:\Users\gpenello\Miniconda3\pythonw.exe"
    - Pasta geral do Windows: "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\"
@@ -36,9 +44,14 @@ pause
   - Pasta geral do Windows: "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\"
 
 
-## (Windows) Instalar o programa AutoHotKey  
+## (Windows) Instalar o programa AutoHotKey 
+
 Importante para desabilitar os comandos alt+tab, windows+tab e CTRL+Esc dos teclados
+
  - https://www.autohotkey.com/
+
+O programa tem que estar instalado em C:\Program Files\AutoHotkey\AutoHotkey.exe
+
 
 
 G. M. Penello, 2019

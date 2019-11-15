@@ -10,6 +10,7 @@ import subprocess
 import signal
 from sys import platform
 import urllib.request as urllib2
+from win32com.client import Dispatch
 
 
 import criptografarPassword as cript
@@ -816,6 +817,22 @@ class NovoAdmin(QMainWindow):
         self.btn_ok.clicked.connect(self.get_login_pass)
         self.btn_selectFile.clicked.connect(self.get_progExt)
         
+        self.criar_atalho()
+
+    def criar_atalho(self):
+
+        caminho = os.path.dirname(os.path.abspath(__file__))
+        path = os.path.join(caminho, "RegistroDeUso - Atalho.lnk")
+        target = os.path.join(caminho, "RegistroDeUso.pyw")
+        wDir = caminho
+
+        shell = Dispatch('WScript.Shell')
+        shortcut = shell.CreateShortCut(path)
+        shortcut.Targetpath = target
+        shortcut.WorkingDirectory = wDir
+        shortcut.save()
+
+
     def get_progExt(self):
         fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*)")
         if fileName:
