@@ -4,15 +4,8 @@ Utilize esse programa para criar um banco de dados contendo registro de usuário
 
 ## Configurações
 
-Ajeite as variáveis "TelaCheia" e "equipamento" no arquivo RegistroDeUso.pyw antes de rodar o programa e coloque também o caminho completo do programa que quer que abra ao fazer o login na variável "software_externo_path":
-Exemplo:
-```
-    equipamento = 'LaserCutter' 
-    TelaCheia = True
-    software_externo_path = '/home/pi/Documents/registro-de-uso-presenca-lab/K40_Whisperer-0.37_src/k40_whisperer.py'
-```
+Ao rodar o programa pela primeira vez, será realizado o cadastro do administrador do programa.
 
-Caso não queira abrir nenhum software externo, deixe a variável como: "software_externo_path = None"
 
 Com "TelaCheia = True", fica praticamente impossível de fechar o programa sem ser usuário cadastrado (se descobrir uma forma, me avise!). :) 
 
