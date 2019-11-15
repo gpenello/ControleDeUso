@@ -12,16 +12,28 @@ A ideia é realmente dificultar fechar o programa.
 
 ## (RPI) Passo a passo para que o programa seja inicializado automaticamente:
 - Ajeitar o caminho do arquivo "start_python.sh" nas linhas 2 e 3
-  Ex.:
+- Ex.:
 ```
 cd /home/pi/Documents/registro-de-uso-presenca-lab/Controle_UsoDeEquipamento
 /usr/bin/python3 RegistroDeUso.py
 ```          
 - Ajeitar o caminho do arquivo "RegistroDeUso.service" na linha 7
-  Ex.:
+- Ex.:
 ```
  ExecStart=/home/pi/start_python.sh 
 ```          
+- copiar serviço para a pasta correta
+-Ex.:
+```
+sudo cp RegistroDeUso.service \etc\system\systemd\RegistroDeUso.service
+```          
+
+- Habilitar o serviço:
+```
+sudo systemctl enable RegistroDeUso.service
+```          
+
+
 
 ## (Windows) Passo a passo para que o programa seja inicializado automaticamente:
 Escolha um dos dois jeitos abaixo:
