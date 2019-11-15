@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>570</width>
-    <height>380</height>
+    <height>450</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,13 +19,13 @@
   <property name="minimumSize">
    <size>
     <width>570</width>
-    <height>380</height>
+    <height>450</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>570</width>
-    <height>380</height>
+    <height>450</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -166,7 +166,7 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>130</width>
+            <width>200</width>
             <height>0</height>
            </size>
           </property>
@@ -234,7 +234,7 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>130</width>
+            <width>200</width>
             <height>0</height>
            </size>
           </property>
@@ -302,7 +302,7 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>130</width>
+            <width>200</width>
             <height>0</height>
            </size>
           </property>
@@ -370,7 +370,7 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>130</width>
+            <width>200</width>
             <height>0</height>
            </size>
           </property>
@@ -444,7 +444,7 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>130</width>
+            <width>200</width>
             <height>0</height>
            </size>
           </property>
@@ -518,7 +518,7 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>130</width>
+            <width>200</width>
             <height>0</height>
            </size>
           </property>
@@ -538,6 +538,9 @@
         </item>
         <item>
          <widget class="QLineEdit" name="txt_progExterno">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -675,7 +678,7 @@
      <x>0</x>
      <y>0</y>
      <width>570</width>
-     <height>21</height>
+     <height>18</height>
     </rect>
    </property>
   </widget>

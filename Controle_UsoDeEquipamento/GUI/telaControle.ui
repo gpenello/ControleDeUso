@@ -287,7 +287,9 @@
        <widget class="QLabel" name="lbl_info">
         <property name="text">
          <string>Software de controle de uso em desenvolvimento.
-Qualquer dúvida / erro / comentário falar com Germano (gpenello@if.ufrj.br)</string>
+
+Qualquer dúvida / erro / comentário 
+falar com Germano (gpenello@if.ufrj.br)</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>

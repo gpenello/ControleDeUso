@@ -806,7 +806,7 @@ class BancoDeDados():
         except Error as e:
             print(e)
 
-    def set_hora_fim(self, login, equipamento, tempo_total, situacao='OK'):
+    def set_hora_fim(self, login, equipamento, tempo_total, situacao='Uso normal.'):
         try:
             if self.check_autorizacao_equip(login, equipamento) is True:
                 # linha_id = self.check_id_inicio(login, equipamento)
