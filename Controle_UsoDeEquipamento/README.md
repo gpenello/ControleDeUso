@@ -11,6 +11,12 @@ Com checkbox TelaCheia selecionado, fica praticamente impossível de fechar o pr
 A ideia é realmente dificultar fechar o programa. 
 
 ## (RPI) Passo a passo para que o programa seja inicializado automaticamente:
+
+  - Rodar o programa a primeira vez e cadastrar o administrador.
+  - Após criar a conta de administrador, o programa já alterou o sistema para a inicialização automática. Caso não estea inicializando automaticamente, siga os passos abaixo.
+
+- - A PRINCÍPIO NÃO PRECISA MAIS FAZER OS PASSOS ABAIXO. AGORA TUDO ESTÁ SENDO FEITO NA INICIALIZAÇÃO DO ADMINISTRADOR. (DEIXANDO AQUI APENAS PARA REFERÊNCIA)
+
 - Ajeitar o caminho do arquivo "start_python.sh" nas linhas 2 e 3
 - Ex.:
 ```
@@ -23,7 +29,7 @@ cd /home/pi/Documents/registro-de-uso-presenca-lab/Controle_UsoDeEquipamento
  ExecStart=/home/pi/start_python.sh 
 ```          
 - copiar serviço para a pasta correta
--Ex.:
+- Ex.:
 ```
 sudo cp RegistroDeUso.service \etc\system\systemd\RegistroDeUso.service
 ```          
@@ -36,6 +42,12 @@ sudo systemctl enable RegistroDeUso.service
 
 
 ## (Windows) Passo a passo para que o programa seja inicializado automaticamente:
+  - Rodar o programa a primeira vez e cadastrar o administrador.
+  - Após criar a conta de administrador, copiar o arquivo "Run_RegistroDeUso.bat" gerado anteriormente para a pasta de Startup: "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\"
+
+
+- - NÃO PRECISA MAIS FAZER OS PASSOS ABAIXO. AGORA QUASE TUDO ESTÁ SENDO FEITO NA INICIALIZAÇÃO DO ADMINISTRADOR. (DEIXANDO AQUI APENAS PARA REFERÊNCIA)
+
 Escolha um dos dois jeitos abaixo:
 ### Jeito 1
 

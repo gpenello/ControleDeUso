@@ -11,7 +11,7 @@ import signal
 from sys import platform
 import urllib.request as urllib2
 from win32com.client import Dispatch
-
+import re
 
 import criptografarPassword as cript
 from BancoDeDados_Local import BancoDeDados
@@ -25,7 +25,7 @@ log_path = os.path.join(dir_path, 'log')
 if platform == "linux" or platform == "linux2":
     subprocess.Popen(['xmodmap', '.Xmodmap_disable'])
 elif platform == "win32":
-    subprocess.Popen(['C:\\Program Files\\AutoHotkey\\AutoHotkey.exe', 'autoHotKey_disable.aht'])
+    subprocess.Popen(['C:\\Program Files\\AutoHotkey\\AutoHotkey.exe', os.path.join(dir_path, 'autoHotKey_disable.aht')])
 
 
 
@@ -817,7 +817,26 @@ class NovoAdmin(QMainWindow):
         self.btn_ok.clicked.connect(self.get_login_pass)
         self.btn_selectFile.clicked.connect(self.get_progExt)
         
-        self.criar_atalho()
+        if platform == "linux" or platform == "linux2":
+            with open("start_python.sh","w+") as f:
+                f.truncate(0)
+                f.write("#!/bin/bash\ncd {}\n/usr/bin/python3 RegistroDeUso.py".format(dir_path))
+            with open("RegistroDeUso.service","r") as f:
+                old_text = f.read()
+            exec_antigo = re.findall('ExecStart=(.*)', old_text)
+            new_text = old_text.replace('ExecStart=' + exec_antigo[0],
+                                    'ExecStart="' + dir_path + '"')
+            with open(os.path.join(dir_path,"RegistroDeUso.service"),"w") as f:
+                f.write(new_text)
+                
+            subprocess.Popen(['sudo', 'cp', 'RegistroDeUso.service', '\etc\system\systemd\RegistroDeUso.service'])
+            subprocess.Popen(['sudo', 'systemctl', 'enable', 'RegistroDeUso.service'])
+
+        elif platform == "win32":
+            with open(os.path.join(dir_path,"Run_RegistroDeUso.bat"),"w+") as f:
+                f.truncate(0)
+                f.write('start "python" "{}"'.format(os.path.join(dir_path, "RegistroDeUso.pyw")) + "\r\npause")
+            os.popen('copy Run_RegistroDeUso.bat C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp')
 
     def criar_atalho(self):
 
