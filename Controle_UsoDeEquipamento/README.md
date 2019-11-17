@@ -9,13 +9,13 @@ Ao rodar o programa pela primeira vez, será realizado o cadastro do administrad
 Com checkbox TelaCheia selecionado, fica praticamente impossível de fechar o programa sem ser usuário cadastrado (se descobrir uma forma, me avise!). :) 
 
 A ideia é realmente dificultar fechar o programa. 
-
+---
 ## (RPI) Passo a passo para que o programa seja inicializado automaticamente:
 
   - Rodar o programa a primeira vez e cadastrar o administrador.
-  - Após criar a conta de administrador, o programa já alterou o sistema para a inicialização automática. Caso não estea inicializando automaticamente, siga os passos abaixo.
+  - Após criar a conta de administrador, o programa já alterou o sistema para a inicialização automática. Caso o programa não esteja inicializando automaticamente após o reboot, siga os passos abaixo.
 
-##### A PRINCÍPIO NÃO PRECISA MAIS FAZER OS PASSOS ABAIXO. AGORA TUDO ESTÁ SENDO FEITO NA INICIALIZAÇÃO DO ADMINISTRADOR. (DEIXANDO AQUI APENAS PARA REFERÊNCIA)
+##### A PRINCÍPIO NÃO PRECISA MAIS FAZER OS PASSOS ABAIXO. AGORA TUDO ESTÁ SENDO FEITO NA INICIALIZAÇÃO DO ADMINISTRADOR. (DEIXANDO AQUI APENAS PARA REFERÊNCIA OU ERROS)
 
 - Ajeitar o caminho do arquivo "start_python.sh" nas linhas 2 e 3
 - Ex.:
@@ -40,7 +40,7 @@ sudo systemctl enable RegistroDeUso.service
 ```          
 
 
-
+---
 ## (Windows) Passo a passo para que o programa seja inicializado automaticamente:
   - Rodar o programa a primeira vez e cadastrar o administrador.
   - Após criar a conta de administrador, copiar o arquivo "Run_RegistroDeUso.bat" gerado anteriormente para a pasta de Startup: "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\"
@@ -77,6 +77,7 @@ Importante para desabilitar os comandos alt+tab, windows+tab e CTRL+Esc dos tecl
 O programa tem que estar instalado em C:\Program Files\AutoHotkey\AutoHotkey.exe
 
 
+---
 
 G. M. Penello, 2019
 gpenello@gmail.com
