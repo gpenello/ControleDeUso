@@ -9,7 +9,9 @@ Ao rodar o programa pela primeira vez, será realizado o cadastro do administrad
 Com checkbox TelaCheia selecionado, fica praticamente impossível de fechar o programa sem ser usuário cadastrado (se descobrir uma forma, me avise!). :) 
 
 A ideia é realmente dificultar fechar o programa. 
+
 ---
+
 ## (RPI) Passo a passo para que o programa seja inicializado automaticamente:
 
   - Rodar o programa a primeira vez e cadastrar o administrador.
@@ -74,7 +76,7 @@ Importante para desabilitar os comandos alt+tab, windows+tab e CTRL+Esc dos tecl
 
  - https://www.autohotkey.com/
 
-O programa tem que estar instalado em C:\Program Files\AutoHotkey\AutoHotkey.exe
+O programa tem que estar instalado em "C:\Program Files\AutoHotkey\AutoHotkey.exe"
 
 
 ---

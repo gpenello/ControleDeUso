@@ -125,6 +125,8 @@ class DesignerMainWindow(QMainWindow):
         self.keep_minimized()
         self.novoAdmin.show()
         self.novoAdmin.activateWindow()
+        self.novoAdmin.gerar_arquivos_inicializacao()
+        
         if platform == "linux" or platform == "linux2":
             subprocess.Popen(['xmodmap', '.Xmodmap_enable'])
     
@@ -816,7 +818,9 @@ class NovoAdmin(QMainWindow):
         self.btn_sair.clicked.connect(self.close)
         self.btn_ok.clicked.connect(self.get_login_pass)
         self.btn_selectFile.clicked.connect(self.get_progExt)
-        
+
+
+    def gerar_arquivos_inicializacao(self):
         if platform == "linux" or platform == "linux2":
             with open("start_python.sh","w+") as f:
                 f.truncate(0)
@@ -835,8 +839,14 @@ class NovoAdmin(QMainWindow):
         elif platform == "win32":
             with open(os.path.join(dir_path,"Run_RegistroDeUso.bat"),"w+") as f:
                 f.truncate(0)
-                f.write('start "python" "{}"'.format(os.path.join(dir_path, "RegistroDeUso.pyw")) + "\r\npause")
-            os.popen('copy Run_RegistroDeUso.bat C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp')
+                f.write('start "python" "{}"'.format(os.path.join(dir_path, "RegistroDeUso.pyw")))
+                try:
+                    comando = ['copy', 'Run_RegistroDeUso.bat', 'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp']
+                    process = subprocess.Popen(comando, stdout=subprocess.PIPE, stderr=None, shell=True)
+                    output = process.communicate()
+                except:
+                    ok = QMessageBox.about(self, "Acesso negado! Leia o README.", "Copie o arquivo Run_RegistroDeUso.bat para a pasta de inicialização para ajeitar a inicialização automática!")        
+
 
     def criar_atalho(self):
 
