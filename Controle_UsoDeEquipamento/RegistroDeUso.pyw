@@ -9,8 +9,7 @@ import os
 import subprocess
 import signal
 from sys import platform
-import urllib.request as urllib2
-from win32com.client import Dispatch
+import urllib.request as urllib2    
 import re
 
 import criptografarPassword as cript
@@ -25,6 +24,7 @@ log_path = os.path.join(dir_path, 'log')
 if platform == "linux" or platform == "linux2":
     subprocess.Popen(['xmodmap', '.Xmodmap_disable'])
 elif platform == "win32":
+    from win32com.client import Dispatch
     subprocess.Popen(['C:\\Program Files\\AutoHotkey\\AutoHotkey.exe', os.path.join(dir_path, 'autoHotKey_disable.aht')])
 
 
