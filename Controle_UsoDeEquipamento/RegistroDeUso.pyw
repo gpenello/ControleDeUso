@@ -131,22 +131,32 @@ class DesignerMainWindow(QMainWindow):
             subprocess.Popen(['xmodmap', '.Xmodmap_enable'])
     
     def git_bitbucket(self):
-        reply = QMessageBox.question(self, 'Download...',
-                                        'Fazer update do programa?', QMessageBox.Yes,
-                                        QMessageBox.No)
-        if reply == QMessageBox.Yes:
-            if self.is_online():
-                p = subprocess.Popen(['git', 'pull', 'origin', 'master'], stdout=subprocess.PIPE)
-                result = p.communicate()[0]
-                QMessageBox.about(
-                    self, "Reinicie o computador", result.decode("utf-8")  + '\r\n' +
-                    "Reinicie o computador para qua as mudanças sejam efetivadas."
-                )
+
+
+        senha_autorizacao, ok = QInputDialog.getText(
+            self, "Aguardando autorização...", "Senha de autorização:",
+            QtWidgets.QLineEdit.Password)
+        if ok:
+            dados_admin = self.db.check_admin()
+            senha = dados_admin[5]
+            #print(dados_admin)
+
+            if cript.check_password(senha, senha_autorizacao) or cript.check_autorizacao(senha_autorizacao):
+                if self.is_online():
+                    p = subprocess.Popen(['git', 'pull', 'origin', 'master'], stdout=subprocess.PIPE)
+                    result = p.communicate()[0]
+                    QMessageBox.about(
+                        self, "Reinicie o computador", result.decode("utf-8")  + '\r\n' +
+                        "Reinicie o computador para qua as mudanças sejam efetivadas."
+                    )
+                else:
+                    QMessageBox.about(
+                        self, "Sem conexão com a internet.",
+                        "Conecte à internet e clique novamente para atualizar o programa."
+                    )
             else:
-                QMessageBox.about(
-                    self, "Sem conexão com a internet.",
-                    "Conecte à internet e clique novamente para atualizar o programa."
-                )
+                QMessageBox.about(self, "Erro!",
+                                  "Senha de autorização não confere!")        
 
 
     def shutdown(self):
@@ -824,17 +834,16 @@ class NovoAdmin(QMainWindow):
         if platform == "linux" or platform == "linux2":
             with open("start_python.sh","w+") as f:
                 f.truncate(0)
-                f.write("#!/bin/bash\ncd {}\n/usr/bin/python3 RegistroDeUso.py".format(dir_path))
-            with open("RegistroDeUso.service","r") as f:
+                f.write("#!/bin/bash\ncd {}\n/usr/bin/python3 RegistroDeUso.pyw".format(dir_path))
+            with open("RegistroDeUso.desktop","r") as f:
                 old_text = f.read()
-            exec_antigo = re.findall('ExecStart=(.*)', old_text)
-            new_text = old_text.replace('ExecStart=' + exec_antigo[0],
-                                    'ExecStart="' + dir_path + '"')
+            exec_antigo = re.findall('Exec=(.*)', old_text)
+            new_text = old_text.replace('Exec=' + exec_antigo[0],
+                                    'Exec="' + dir_path + '/start_python.sh"')
             with open(os.path.join(dir_path,"RegistroDeUso.service"),"w") as f:
-                f.write(new_text)
-                
-            subprocess.Popen(['sudo', 'cp', 'RegistroDeUso.service', '\etc\system\systemd\RegistroDeUso.service'])
-            subprocess.Popen(['sudo', 'systemctl', 'enable', 'RegistroDeUso.service'])
+                f.write(new_text)    
+            subprocess.Popen(['sudo', 'cp', 'RegistroDeUso.desktop', os.path.join(os.getenv("HOME"),".config/autostart/RegistroDeUso.desktop")])
+            subprocess.Popen(['sudo', 'chmod', '+x', "start_python.sh"])
 
         elif platform == "win32":
             with open(os.path.join(dir_path,"Run_RegistroDeUso.bat"),"w+") as f:
