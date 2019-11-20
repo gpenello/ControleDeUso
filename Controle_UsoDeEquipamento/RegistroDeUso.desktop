@@ -6,4 +6,5 @@ Exec=/home/germano/Documents/Faculdade/UFRJ/Programas/Python/registro-de-uso-pre
 Terminal=false
 StartupNotify=true
 Type=Application
+NoDisplay=false
 Categories=Utility;Application;

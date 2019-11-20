@@ -164,10 +164,11 @@ class DesignerMainWindow(QMainWindow):
                                         'Desligar o computador?', QMessageBox.Yes,
                                         QMessageBox.No)
         if reply == QMessageBox.Yes:
-            if platform == "linux" or platform == "linux2":
-                subprocess.Popen(['sudo', 'shutdown', '-h', 'now'])
-            elif platform == "win32":
-                QMessageBox.about(self, "Desligando...","Este comando funciona apenas em Linux.")
+            os.system("shutdown /s /t 1") 
+            # if platform == "linux" or platform == "linux2":
+            #     subprocess.Popen(['sudo', 'shutdown', '-h', 'now'])
+            # elif platform == "win32":
+            #     QMessageBox.about(self, "Desligando...","Este comando funciona apenas em Linux.")
 
     def baixar_db_usuarios(self):
         try:
@@ -843,7 +844,7 @@ class NovoAdmin(QMainWindow):
             with open(os.path.join(dir_path,"RegistroDeUso.service"),"w") as f:
                 f.write(new_text)    
             subprocess.Popen(['sudo', 'cp', 'RegistroDeUso.desktop', os.path.join(os.getenv("HOME"),".config/autostart/RegistroDeUso.desktop")])
-            subprocess.Popen(['sudo', 'chmod', '+x', "start_python.sh"])
+            subprocess.Popen(['sudo', 'chmod', '+x', os.path.join(dir_path,"start_python.sh")])
 
         elif platform == "win32":
             with open(os.path.join(dir_path,"Run_RegistroDeUso.bat"),"w+") as f:
