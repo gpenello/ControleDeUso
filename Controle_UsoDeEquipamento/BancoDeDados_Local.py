@@ -31,7 +31,8 @@ class BancoDeDados():
         try:
             urllib2.urlopen('http://www.google.com', timeout=1)
             return True
-        except urllib2.URLError:
+        # except urllib2.URLError:
+        except:
             return False
             
 

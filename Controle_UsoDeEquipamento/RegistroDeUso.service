@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=gpenello
+Comment=Registro de Uso
+Exec="/home/gpenello/Documents/Programas/Python/registro-de-uso-presenca-lab/Controle_UsoDeEquipamento/start_python.sh"
+Terminal=false
+StartupNotify=true
+Type=Application
+NoDisplay=false
+Categories=Utility;Application;

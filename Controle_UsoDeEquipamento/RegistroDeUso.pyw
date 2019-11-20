@@ -841,8 +841,9 @@ class NovoAdmin(QMainWindow):
             exec_antigo = re.findall('Exec=(.*)', old_text)
             new_text = old_text.replace('Exec=' + exec_antigo[0],
                                     'Exec="' + dir_path + '/start_python.sh"')
-            with open(os.path.join(dir_path,"RegistroDeUso.service"),"w") as f:
-                f.write(new_text)    
+            with open(os.path.join(dir_path,"RegistroDeUso.desktop"),"w") as f:
+                f.write(new_text)
+            subprocess.Popen(['sudo', 'mkdir', '-p', os.path.join(os.getenv("HOME"),".config/autostart")])
             subprocess.Popen(['sudo', 'cp', 'RegistroDeUso.desktop', os.path.join(os.getenv("HOME"),".config/autostart/RegistroDeUso.desktop")])
             subprocess.Popen(['sudo', 'chmod', '+x', os.path.join(dir_path,"start_python.sh")])
 
