@@ -835,11 +835,11 @@ class NovoAdmin(QMainWindow):
         if platform == "linux" or platform == "linux2":
             with open("start_python.sh","w+") as f:
                 f.truncate(0)
-                f.write("#!/bin/bash\ncd {}\n/usr/bin/python3 RegistroDeUso.pyw".format(dir_path))
+                f.write("#!/bin/bash\nsudo cd {}\n/usr/bin/python3 RegistroDeUso.pyw".format(dir_path))
             with open("RegistroDeUso.desktop","r") as f:
                 old_text = f.read()
             exec_antigo = re.findall('Exec=(.*)', old_text)
-            new_text = old_text.replace('Exec=' + exec_antigo[0],
+            new_text = old_text.replace('Exec=sudo ' + exec_antigo[0],
                                     'Exec="' + dir_path + '/start_python.sh"')
             with open(os.path.join(dir_path,"RegistroDeUso.desktop"),"w") as f:
                 f.write(new_text)
