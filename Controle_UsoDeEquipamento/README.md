@@ -4,21 +4,50 @@ Utilize esse programa para criar um banco de dados contendo registro de usuário
 
 ## Configurações
 
-Ao rodar o programa pela primeira vez, será realizado o cadastro do administrador do programa. No linux, o programa já acertará os arquivos para a inicialização automática. No Windows, a inicialização automática deve ser feita manualmente.
-
-Com checkbox TelaCheia selecionado, fica praticamente impossível de fechar o programa sem ser usuário cadastrado (se descobrir uma forma, me avise!). :) 
+Ao rodar o programa pela primeira vez, será realizado o cadastro do administrador do programa. Com checkbox TelaCheia selecionado, fica praticamente impossível de fechar o programa sem ser usuário cadastrado (se descobrir uma forma, me avise!). :) 
 
 A ideia é realmente dificultar fechar o programa. 
 
+### Linux
+
+- Rodar a primeira vez como root e cadastrar o administrador.
+```
+sudo python3 RegistroDeUso.pyw
+```
+- Após criar a conta de administrador, o programa já alterou o sistema para a inicialização automática. Caso o programa não esteja inicializando automaticamente após o reboot, siga os passos abaixo.
+
+
+### Windows
+
+No Windows, a inicialização automática deve ser feita manualmente.
+  - Rodar o programa a primeira vez e cadastrar o administrador.
+  - Após criar a conta de administrador, copiar o arquivo "Run_RegistroDeUso.bat" gerado anteriormente para a pasta de Startup: "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\"
+
+  - Instalar o programa AutoHotKey 
+
+Importante para desabilitar os comandos alt+tab, windows+tab e CTRL+Esc dos teclados
+
+ - https://www.autohotkey.com/
+
+O programa tem que estar instalado em "C:\Program Files\AutoHotkey\AutoHotkey.exe"
+
 ---
 
-## (RPI) Passo a passo para que o programa seja inicializado automaticamente:
+##### (LINUX) A PRINCÍPIO NÃO PRECISA MAIS FAZER OS PASSOS ABAIXO. AGORA TUDO ESTÁ SENDO FEITO NA INICIALIZAÇÃO DO ADMINISTRADOR. (DEIXANDO AQUI APENAS PARA REFERÊNCIA OU ERROS)
 
-  - Rodar o programa a primeira vez e cadastrar o administrador.
-  - Após criar a conta de administrador, o programa já alterou o sistema para a inicialização automática. Caso o programa não esteja inicializando automaticamente após o reboot, siga os passos abaixo.
 
-##### A PRINCÍPIO NÃO PRECISA MAIS FAZER OS PASSOS ABAIXO. AGORA TUDO ESTÁ SENDO FEITO NA INICIALIZAÇÃO DO ADMINISTRADOR. (DEIXANDO AQUI APENAS PARA REFERÊNCIA OU ERROS)
+Se o programa não iniciar automaticamente, o problema pode estar no arquivo /etc/sudoers. Verificar como o comando:
+```  
+sudo visudo
+```  
+ou 
+```  
+pkexec visudo
+```  
 
+Outra possibilidade é o programa estar instalado em um caminho que contenha espaço ou caracteres especiais. 
+
+Outras tentativas:
 - Ajeitar o caminho do arquivo "start_python.sh" nas linhas 2 e 3
 - Ex.:
 ```
@@ -40,15 +69,9 @@ sudo cp RegistroDeUso.service \etc\system\systemd\RegistroDeUso.service
 ```
 sudo systemctl enable RegistroDeUso.service
 ```          
-
-
 ---
-## (Windows) Passo a passo para que o programa seja inicializado automaticamente:
-  - Rodar o programa a primeira vez e cadastrar o administrador.
-  - Após criar a conta de administrador, copiar o arquivo "Run_RegistroDeUso.bat" gerado anteriormente para a pasta de Startup: "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\"
 
-
-##### A PRINCÍPIO NÃO PRECISA MAIS FAZER OS PASSOS ABAIXO. AGORA QUASE TUDO ESTÁ SENDO FEITO NA INICIALIZAÇÃO DO ADMINISTRADOR. (DEIXANDO AQUI APENAS PARA REFERÊNCIA)
+##### (WINDOWS) A PRINCÍPIO NÃO PRECISA MAIS FAZER OS PASSOS ABAIXO. AGORA QUASE TUDO ESTÁ SENDO FEITO NA INICIALIZAÇÃO DO ADMINISTRADOR. (DEIXANDO AQUI APENAS PARA REFERÊNCIA)
 
 Escolha um dos dois jeitos abaixo:
 ### Jeito 1
@@ -68,15 +91,6 @@ pause
 ```          
   - Copiar o arquivo .bat gerado anteriormente para a pasta de Startup
   - Pasta geral do Windows: "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\"
-
-
-## (Windows) Instalar o programa AutoHotKey 
-
-Importante para desabilitar os comandos alt+tab, windows+tab e CTRL+Esc dos teclados
-
- - https://www.autohotkey.com/
-
-O programa tem que estar instalado em "C:\Program Files\AutoHotkey\AutoHotkey.exe"
 
 
 ---

@@ -164,11 +164,11 @@ class DesignerMainWindow(QMainWindow):
                                         'Desligar o computador?', QMessageBox.Yes,
                                         QMessageBox.No)
         if reply == QMessageBox.Yes:
-            os.system("shutdown /s /t 1") 
-            # if platform == "linux" or platform == "linux2":
-            #     subprocess.Popen(['sudo', 'shutdown', '-h', 'now'])
-            # elif platform == "win32":
-            #     QMessageBox.about(self, "Desligando...","Este comando funciona apenas em Linux.")
+             
+            if platform == "linux" or platform == "linux2":
+                subprocess.Popen(['sudo', 'shutdown', '-h', 'now'])
+            elif platform == "win32":
+                os.system("shutdown /s /t 1")
 
     def baixar_db_usuarios(self):
         try:
@@ -831,21 +831,42 @@ class NovoAdmin(QMainWindow):
         self.btn_selectFile.clicked.connect(self.get_progExt)
 
 
+        centroTela = QDesktopWidget().availableGeometry().center()
+        qr = self.frameGeometry()
+        qr.moveCenter(centroTela)
+        self.move(qr.topLeft())
+
+
     def gerar_arquivos_inicializacao(self):
         if platform == "linux" or platform == "linux2":
-            with open("start_python.sh","w+") as f:
-                f.truncate(0)
-                f.write("#!/bin/bash\nsudo cd {}\n/usr/bin/python3 RegistroDeUso.pyw".format(dir_path))
-            with open("RegistroDeUso.desktop","r") as f:
+            # with open("start_python.sh","w+") as f:
+            #     f.truncate(0)
+            #     f.write("#!/bin/bash\nsudo cd {}\n/usr/bin/python3 RegistroDeUso.pyw".format(dir_path))
+            with open(os.path.join(dir_path,"RegistroDeUso.desktop"),"r") as f:
                 old_text = f.read()
             exec_antigo = re.findall('Exec=(.*)', old_text)
             new_text = old_text.replace('Exec=sudo ' + exec_antigo[0],
-                                    'Exec="' + dir_path + '/start_python.sh"')
+                                    'Exec=sudo ' + dir_path + '/RegistroDeUso.pyw')
             with open(os.path.join(dir_path,"RegistroDeUso.desktop"),"w") as f:
                 f.write(new_text)
+
             subprocess.Popen(['sudo', 'mkdir', '-p', os.path.join(os.getenv("HOME"),".config/autostart")])
             subprocess.Popen(['sudo', 'cp', 'RegistroDeUso.desktop', os.path.join(os.getenv("HOME"),".config/autostart/RegistroDeUso.desktop")])
-            subprocess.Popen(['sudo', 'chmod', '+x', os.path.join(dir_path,"start_python.sh")])
+            time.sleep(1)
+            subprocess.Popen(['sudo', 'chmod', '777', os.path.join(os.getenv("HOME"),".config/autostart/RegistroDeUso.desktop")])
+
+            # subprocess.Popen(['sudo', 'chmod', '+x', os.path.join(dir_path,"start_python.sh")])
+            subprocess.Popen(['sudo', 'chown', 'root:root', os.path.join(dir_path,"log/BancoDeDados_Local.db")])
+            subprocess.Popen(['sudo', 'chmod', '700', os.path.join(dir_path,"log/BancoDeDados_Local.db")])
+
+            sudoers_txt = 'ALL ALL = NOPASSWD: ' + dir_path + '/RegistroDeUso.pyw'
+
+            with open("/etc/sudoers","r") as f:
+                old_text = f.read()
+            sudoers_antigo = re.findall(sudoers_txt, old_text)    
+            if sudoers_antigo == []:
+                with open("/etc/sudoers","a") as f:
+                     f.write("\n" + sudoers_txt+"\n")
 
         elif platform == "win32":
             with open(os.path.join(dir_path,"Run_RegistroDeUso.bat"),"w+") as f:
