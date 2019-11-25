@@ -942,8 +942,8 @@ class NovoAdmin(QMainWindow):
             if platform == "linux" or platform == "linux2":
                 subprocess.Popen(['sudo', 'reboot'])
             elif platform == "win32":
-                QMessageBox.about(self, "Desligando...","Este comando funciona apenas em Linux.")
                 self.janelaPrincipal.fechar()
+                os.system("shutdown /r /t 1")
 
         else:
             self.janelaPrincipal.fechar()
