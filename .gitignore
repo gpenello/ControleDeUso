@@ -1,5 +1,6 @@
-.pylintrc
+﻿.pylintrc
 AutoHotkey_1.1.31.01_setup.exe
 K40_Whisperer-0.38_src/
 K40_Whisperer-0.38_src.zip
 LEMBRETE_não incluir na dist.txt
+__pycache__/
