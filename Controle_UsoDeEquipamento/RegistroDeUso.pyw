@@ -874,7 +874,7 @@ class NovoAdmin(QMainWindow):
                 f.truncate(0)
                 f.write('start "python" "{}"'.format(os.path.join(dir_path, "RegistroDeUso.pyw")))
                 try:
-                    comando = ['copy', 'Run_RegistroDeUso.bat', 'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp']
+                    comando = ['copy', 'Run_RegistroDeUso.bat', 'C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\StartUp']
                     process = subprocess.Popen(comando, stdout=subprocess.PIPE, stderr=None, shell=True)
                     output = process.communicate()
                 except:
