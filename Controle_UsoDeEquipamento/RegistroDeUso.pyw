@@ -873,8 +873,9 @@ class NovoAdmin(QMainWindow):
             subprocess.Popen(['sudo', 'chmod', '777', os.path.join(os.getenv("HOME"),".config/autostart/RegistroDeUso.desktop")])
 
             subprocess.Popen(['sudo', 'chmod', '+x', os.path.join(dir_path,"RegistroDeUso.pyw")])
-            subprocess.Popen(['sudo', 'chown', 'root:root', os.path.join(dir_path,"log/BancoDeDados_Local.db")])
-            subprocess.Popen(['sudo', 'chmod', '700', os.path.join(dir_path,"log/BancoDeDados_Local.db")])
+            subprocess.Popen(['sudo', 'chown', 'root:root', os.path.join(dir_path,"log/")])
+            subprocess.Popen(['sudo', 'chmod', '+t', os.path.join(dir_path,"log/")])
+            
             # subprocess.Popen(['sudo', 'chattr', '+a', os.path.join(dir_path,"log/BancoDeDados_Local.db")])
             # subprocess.Popen(['sudo', 'chattr', '+i', os.path.join(dir_path,"log")])
 
