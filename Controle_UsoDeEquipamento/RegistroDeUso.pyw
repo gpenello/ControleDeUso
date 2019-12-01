@@ -952,7 +952,6 @@ class NovoAdmin(QMainWindow):
             elif platform == "win32":
                 # QMessageBox.about(self, "Erro!","Por enquanto este comando funciona apenas em Linux.")
                 os.system("shutdown /r /t 1")
-                self.janelaPrincipal.fechar()
 
         else:
             self.janelaPrincipal.fechar()
