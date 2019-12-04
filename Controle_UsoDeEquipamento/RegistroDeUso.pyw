@@ -65,9 +65,6 @@ class DesignerMainWindow(QMainWindow):
         self.novoUsuario = NovoUsuario(self)
         self.todosUsuarios = TelaTodosUsuarios(self)
         self.historicoDeUso = TelaHistoricoDeUso(self)
-        self.novoAdmin = NovoAdmin(self)
-
-        admin = self.db.check_admin()  
 
         self.equipamento = self.db.check_variavel('equipamento')  
         self.software_externo_path = self.db.check_variavel('progExterno')  
@@ -109,7 +106,9 @@ class DesignerMainWindow(QMainWindow):
                 programa = os.path.basename(self.software_externo_path)
                 self.software_externo = subprocess.Popen(['sudo', 'python3', programa], cwd=diretorio )
 
+        admin = self.db.check_admin()  
         if admin == []:
+            self.novoAdmin = NovoAdmin(self)
             self.cadastrarNovoAdmin()
 
         
@@ -125,7 +124,7 @@ class DesignerMainWindow(QMainWindow):
         self.keep_minimized()
         self.novoAdmin.show()
         self.novoAdmin.activateWindow()
-        self.novoAdmin.gerar_arquivos_inicializacao()
+        # self.novoAdmin.gerar_arquivos_inicializacao()
         
         if platform == "linux" or platform == "linux2":
             subprocess.Popen(['xmodmap', '.Xmodmap_enable'])
@@ -836,49 +835,59 @@ class NovoAdmin(QMainWindow):
         qr.moveCenter(centroTela)
         self.move(qr.topLeft())
 
-
+    def showEvent(self, event):
+        self.gerar_arquivos_inicializacao()
+        event.accept()
+        
+        
     def gerar_arquivos_inicializacao(self):
         if platform == "linux" or platform == "linux2":
+
+            sudoers_txt = 'ALL ALL = NOPASSWD: ' + dir_path + '/RegistroDeUso.pyw'
+            try:
+                with open("/etc/sudoers","r") as f:
+                    old_text = f.read()
+                sudoers_antigo = re.findall(sudoers_txt, old_text)    
+                if sudoers_antigo == []:
+                    with open("/etc/sudoers","a") as f:
+                        f.write("\n" + sudoers_txt+"\n")
+            except PermissionError:
+                QMessageBox.about(self, "Acesso negado! Leia o README.", "Primeiro uso do programa deve ser feito como root.\nEx.:\nsudo python3 RegsitroDeUso.pyw")        
+                sys.exit()
+                return
+
             # with open("start_python.sh","w+") as f:
             #     f.truncate(0)
             #     f.write("#!/bin/bash\nsudo cd {}\n/usr/bin/python3 RegistroDeUso.pyw".format(dir_path))
             with open(os.path.join(dir_path,"RegistroDeUso.desktop"),"r") as f:
                 old_text = f.read()
             exec_antigo = re.findall('Exec=(.*)', old_text)
-            new_text = old_text.replace('Exec=sudo ' + exec_antigo[0],
+            new_text = old_text.replace('Exec=' + exec_antigo[0],
                                     'Exec=sudo ' + dir_path + '/RegistroDeUso.pyw')
             with open(os.path.join(dir_path,"RegistroDeUso.desktop"),"w") as f:
                 f.write(new_text)
-
+ 
             subprocess.Popen(['sudo', 'mkdir', '-p', os.path.join(os.getenv("HOME"),".config/autostart")])
             subprocess.Popen(['sudo', 'cp', 'RegistroDeUso.desktop', os.path.join(os.getenv("HOME"),".config/autostart/RegistroDeUso.desktop")])
             time.sleep(1)
             subprocess.Popen(['sudo', 'chmod', '777', os.path.join(os.getenv("HOME"),".config/autostart/RegistroDeUso.desktop")])
 
-            # subprocess.Popen(['sudo', 'chmod', '+x', os.path.join(dir_path,"start_python.sh")])
-            subprocess.Popen(['sudo', 'chown', 'root:root', os.path.join(dir_path,"log/BancoDeDados_Local.db")])
-            subprocess.Popen(['sudo', 'chmod', '700', os.path.join(dir_path,"log/BancoDeDados_Local.db")])
-            #subprocess.Popen(['sudo', 'chattr', '+i', os.path.join(dir_path,"log")])
+            subprocess.Popen(['sudo', 'chmod', '+x', os.path.join(dir_path,"RegistroDeUso.pyw")])
+            subprocess.Popen(['sudo', 'chown', 'root:root', os.path.join(dir_path,"log/")])
+            subprocess.Popen(['sudo', 'chmod', '+t', os.path.join(dir_path,"log/")])
+            
+            # subprocess.Popen(['sudo', 'chattr', '+a', os.path.join(dir_path,"log/BancoDeDados_Local.db")])
+            # subprocess.Popen(['sudo', 'chattr', '+i', os.path.join(dir_path,"log")])
 
-            sudoers_txt = 'ALL ALL = NOPASSWD: ' + dir_path + '/RegistroDeUso.pyw'
-
-            with open("/etc/sudoers","r") as f:
-                old_text = f.read()
-            sudoers_antigo = re.findall(sudoers_txt, old_text)    
-            if sudoers_antigo == []:
-                with open("/etc/sudoers","a") as f:
-                     f.write("\n" + sudoers_txt+"\n")
 
         elif platform == "win32":
             with open(os.path.join(dir_path,"Run_RegistroDeUso.bat"),"w+") as f:
                 f.truncate(0)
                 f.write('start "python" "{}"'.format(os.path.join(dir_path, "RegistroDeUso.pyw")))
-                try:
-                    comando = ['copy', 'Run_RegistroDeUso.bat', 'C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\StartUp']
-                    process = subprocess.Popen(comando, stdout=subprocess.PIPE, stderr=None, shell=True)
-                    output = process.communicate()
-                except:
-                    ok = QMessageBox.about(self, "Acesso negado! Leia o README.", "Copie o arquivo Run_RegistroDeUso.bat para a pasta de inicialização para ajeitar a inicialização automática!")        
+                # comando = ['copy', 'Run_RegistroDeUso.bat', 'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp']
+                # process = subprocess.Popen(comando, stdout=subprocess.PIPE, stderr=None, shell=True)
+                # output = process.communicate()
+                QMessageBox.about(self, "Leia o README.", "Copie o arquivo Run_RegistroDeUso.bat para a pasta de inicialização para ajeitar a inicialização automática!")        
 
 
     def criar_atalho(self):
@@ -942,7 +951,7 @@ class NovoAdmin(QMainWindow):
             if platform == "linux" or platform == "linux2":
                 subprocess.Popen(['sudo', 'reboot'])
             elif platform == "win32":
-                self.janelaPrincipal.fechar()
+                # QMessageBox.about(self, "Erro!","Por enquanto este comando funciona apenas em Linux.")
                 os.system("shutdown /r /t 1")
 
         else:

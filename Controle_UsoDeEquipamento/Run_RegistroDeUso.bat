@@ -1,1 +1,1 @@
-start "python" "C:\Users\Fotocorrente\Desktop\registro-de-uso-presenca-lab\Controle_UsoDeEquipamento\RegistroDeUso.pyw"
+start "python" "D:\OneDrive - IF-UFRJ\UFRJ\Programas\Python\registro-de-uso-presenca-lab\Controle_UsoDeEquipamento\RegistroDeUso.pyw"
