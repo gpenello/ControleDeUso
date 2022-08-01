@@ -30,8 +30,6 @@ elif platform == "win32":
 
 
 class DesignerMainWindow(QMainWindow):
-
-
     
     equipamento = ""   
     telaCheia = True
@@ -72,6 +70,8 @@ class DesignerMainWindow(QMainWindow):
 
         if self.telaCheia == 'True':
             self.telaCheia = True
+            self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint |
+                    QtCore.Qt.FramelessWindowHint)
         else:
             self.telaCheia = False    
 
@@ -80,9 +80,9 @@ class DesignerMainWindow(QMainWindow):
         #     print(event.scan_code)  #125 - windows key, tab - 15, alt - 56
         #     print(event.time)
 
-        self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint |
-                            QtCore.Qt.FramelessWindowHint)
-        #        self.setWindowFlags()
+        # self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint |
+        #                     QtCore.Qt.FramelessWindowHint)
+
         self.txt_password.setEchoMode(QtWidgets.QLineEdit.Password)
         self.txt_password.returnPressed.connect(self.get_login_pass)
         self.btn_novo.clicked.connect(self.cadastrarNovoUsuario)
@@ -110,15 +110,13 @@ class DesignerMainWindow(QMainWindow):
         if admin == []:
             self.novoAdmin = NovoAdmin(self)
             self.cadastrarNovoAdmin()
-
-        
+  
     def is_online(self):
         try:
             urllib2.urlopen('http://www.google.com', timeout=1)
             return True
         except urllib2.URLError:
             return False
-
 
     def cadastrarNovoAdmin(self):
         self.keep_minimized()
@@ -156,7 +154,6 @@ class DesignerMainWindow(QMainWindow):
             else:
                 QMessageBox.about(self, "Erro!",
                                   "Senha de autorização não confere!")        
-
 
     def shutdown(self):
         reply = QMessageBox.question(self, 'Desligando...',
