@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>530</width>
-    <height>500</height>
+    <width>550</width>
+    <height>550</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>530</width>
-    <height>500</height>
+    <width>550</width>
+    <height>550</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -513,8 +513,8 @@ QPushButton:pressed {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>530</width>
-     <height>21</height>
+     <width>550</width>
+     <height>18</height>
     </rect>
    </property>
   </widget>

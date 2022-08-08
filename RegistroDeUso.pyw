@@ -34,7 +34,7 @@ class DesignerMainWindow(QMainWindow):
     equipamento = ""   
     telaCheia = True
     software_externo_path = ""
-
+    software_externo = None
     # -----------------------------------------------
     # IMPORTANTE: FALTA INTEGRAR OS BANCOS DE DADOS LOCAIS COM O DO RPi de presença com tag RFID.
     # Eles estão diferentes!
@@ -100,11 +100,16 @@ class DesignerMainWindow(QMainWindow):
         self.setWindowIcon(QtGui.QIcon(os.path.join(img_path, "icon.png")))
         # self.installEventFilter(AltTab())
 
-        if platform == "linux" or platform == "linux2":
-            if self.software_externo_path:
-                diretorio = os.path.dirname(self.software_externo_path)
-                programa = os.path.basename(self.software_externo_path)
-                self.software_externo = subprocess.Popen(['sudo', 'python3', programa], cwd=diretorio )
+        # if platform == "linux" or platform == "linux2":
+        #     diretorio = os.path.dirname(self.software_externo_path)
+        #     programa = os.path.basename(self.software_externo_path)    
+        #     if self.software_externo_path:
+        #         self.software_externo = subprocess.Popen(['sudo', 'python3', programa], cwd=diretorio )
+        # elif platform == "win32":
+        #     self.software_externo = subprocess.Popen(self.software_externo_path)
+           
+
+
 
         admin = self.db.check_admin()  
         if admin == []:
@@ -312,8 +317,7 @@ class DesignerMainWindow(QMainWindow):
                         self.janelatempo.show()
                         self.janelatempo.activateWindow()
                         self.keep_minimized()
-                        if platform == "linux" or platform == "linux2":
-                            self.abrir_software_externo()
+                        self.abrir_software_externo()
 
 
                 else:
@@ -322,8 +326,7 @@ class DesignerMainWindow(QMainWindow):
                     self.janelatempo.show()
                     self.janelatempo.activateWindow()
                     self.keep_minimized()
-                    if platform == "linux" or platform == "linux2":
-                        self.abrir_software_externo()
+                    self.abrir_software_externo()
                     
             else:
                 QMessageBox.about(self, "Erro!", str("Senha não confere!"))
@@ -331,12 +334,32 @@ class DesignerMainWindow(QMainWindow):
             QMessageBox.about(self, "Erro!", "Usuário não cadastrado!")
 
     def abrir_software_externo(self):
-        if self.software_externo.poll() != None:
-            if platform == "linux" or platform == "linux2":
-                if self.software_externo_path:
-                    diretorio = os.path.dirname(self.software_externo_path)
-                    programa = os.path.basename(self.software_externo_path)
-                    self.software_externo = subprocess.Popen(['sudo', 'python3', programa], cwd=diretorio )
+        diretorio = os.path.dirname(self.software_externo_path)
+        programa = os.path.basename(self.software_externo_path)
+
+        if self.software_externo_path:
+
+            texto = "O programa recomendado para uso é\r\n" + self.software_externo_path
+            reply = QMessageBox.question(self, 'Abrir programa recomendado?', texto, QMessageBox.Yes,
+                                        QMessageBox.No)
+            if reply == QMessageBox.Yes:
+                self.software_externo = subprocess.Popen(self.software_externo_path)
+
+ 
+            # if self.software_externo is None:   
+            #     if platform == "linux" or platform == "linux2":
+            #         self.software_externo = subprocess.Popen(['sudo', 'python3', programa], cwd=diretorio )
+            #     if platform == "win32":
+            #         self.software_externo = subprocess.run(self.software_externo_path)
+            #         print ("abrindo primeira vez")
+
+            # elif self.software_externo.poll() is not None:
+            #     print("Já está aberto")
+            #     if platform == "linux" or platform == "linux2":
+            #         self.software_externo = subprocess.Popen(['sudo', 'python3', programa], cwd=diretorio )
+            #     if platform == "win32":
+            #         self.software_externo = subprocess.run(self.software_externo_path)
+                        
                     
     def changeEvent(self, e):
         if e.type() == e.WindowStateChange:
