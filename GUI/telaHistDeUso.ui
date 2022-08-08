@@ -395,7 +395,7 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>Tempo total de uso:       </string>
+           <string>Tempo de uso:       </string>
           </property>
          </widget>
         </item>
@@ -454,7 +454,7 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>Tempo total de equipamento ligado:       </string>
+           <string>Tempo total de todos usuários:       </string>
           </property>
          </widget>
         </item>
@@ -555,7 +555,7 @@
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>21</height>
+     <height>18</height>
     </rect>
    </property>
   </widget>
