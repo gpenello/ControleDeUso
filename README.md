@@ -20,6 +20,45 @@ Ao rodar o programa pela primeira vez, será realizado o cadastro do administrad
 
 A ideia é realmente dificultar fechar o programa! 
 
+Confira o arquivo Programa "Controle de Uso de Equipamento.pptx" para ver algumas informações adicionais contendo imagens das janelas do programa.
+
+---
+
+## (Windows) Passo a passo para que o programa seja inicializado automaticamente:
+
+No Windows, a inicialização automática deve ser feita manualmente.
+  - Rodar o programa a primeira vez e cadastrar o administrador.
+  - Após criar a conta de administrador, copiar o arquivo "Run_RegistroDeUso.bat" gerado anteriormente para a pasta de Startup: "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\"
+  - Instalar o programa AutoHotKey 
+
+Importante para desabilitar os comandos alt+tab, windows+tab e CTRL+Esc dos teclados
+
+ - https://www.autohotkey.com/
+
+O programa tem que estar instalado em "C:\Program Files\AutoHotkey\AutoHotkey.exe"
+
+##### (WINDOWS) A PRINCÍPIO NÃO PRECISA MAIS FAZER OS PASSOS ABAIXO. AGORA QUASE TUDO ESTÁ SENDO FEITO NA INICIALIZAÇÃO DO ADMINISTRADOR. (DEIXANDO AQUI APENAS PARA REFERÊNCIA)
+
+Escolha um dos dois jeitos abaixo:
+### Jeito 1
+  - Associar o pythonw.exe para abrir as extensões .pyw
+  - Após cadastrar o Administrador, copiar o arquivo "RegistroDeUso - Atalho" para a pasta de Startup
+  - Ex.: 
+   - Executável em "C:\Users\gpenello\Miniconda3\pythonw.exe"
+   - Pasta geral do Windows: "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\"
+### Jeito 2  
+  - Criar um arquivo RunRegistroDeUso.bat para inicializar o programa.
+  Ex.:
+```
+"C:\Users\gpenello\Miniconda3\python.exe" "D:\OneDrive - IF-UFRJ\UFRJ\Programas\Python\registro-de-uso-presenca-lab\Controle_UsoDeEquipamento\RegistroDeUso.py"
+pause
+```          
+  - Copiar o arquivo .bat gerado anteriormente para a pasta de Startup
+  - Pasta geral do Windows: "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\"
+
+
+---
+
 ---
 ### Linux
 
@@ -65,43 +104,8 @@ sudo cp RegistroDeUso.service \etc\system\systemd\RegistroDeUso.service
 sudo systemctl enable RegistroDeUso.service
 ```          
 
-
 ---
 
-## (Windows) Passo a passo para que o programa seja inicializado automaticamente:
-
-No Windows, a inicialização automática deve ser feita manualmente.
-  - Rodar o programa a primeira vez e cadastrar o administrador.
-  - Após criar a conta de administrador, copiar o arquivo "Run_RegistroDeUso.bat" gerado anteriormente para a pasta de Startup: "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\"
-  - Instalar o programa AutoHotKey 
-
-Importante para desabilitar os comandos alt+tab, windows+tab e CTRL+Esc dos teclados
-
- - https://www.autohotkey.com/
-
-O programa tem que estar instalado em "C:\Program Files\AutoHotkey\AutoHotkey.exe"
-
-##### (WINDOWS) A PRINCÍPIO NÃO PRECISA MAIS FAZER OS PASSOS ABAIXO. AGORA QUASE TUDO ESTÁ SENDO FEITO NA INICIALIZAÇÃO DO ADMINISTRADOR. (DEIXANDO AQUI APENAS PARA REFERÊNCIA)
-
-Escolha um dos dois jeitos abaixo:
-### Jeito 1
-  - Associar o pythonw.exe para abrir as extensões .pyw
-  - Após cadastrar o Administrador, copiar o arquivo "RegistroDeUso - Atalho" para a pasta de Startup
-  - Ex.: 
-   - Executável em "C:\Users\gpenello\Miniconda3\pythonw.exe"
-   - Pasta geral do Windows: "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\"
-### Jeito 2  
-  - Criar um arquivo RunRegistroDeUso.bat para inicializar o programa.
-  Ex.:
-```
-"C:\Users\gpenello\Miniconda3\python.exe" "D:\OneDrive - IF-UFRJ\UFRJ\Programas\Python\registro-de-uso-presenca-lab\Controle_UsoDeEquipamento\RegistroDeUso.py"
-pause
-```          
-  - Copiar o arquivo .bat gerado anteriormente para a pasta de Startup
-  - Pasta geral do Windows: "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\"
-
-
----
 
 G. M. Penello, 2019
 gpenello@gmail.com
