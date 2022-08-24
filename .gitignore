@@ -4,3 +4,6 @@ K40_Whisperer-0.38_src/
 K40_Whisperer-0.38_src.zip
 LEMBRETE_não incluir na dist.txt
 __pycache__/
+build/
+dist/
+RegistroDeUso.spec

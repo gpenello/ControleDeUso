@@ -21,13 +21,6 @@ GUI_path = os.path.join(dir_path, 'GUI')
 img_path = os.path.join(dir_path, 'imagens')
 log_path = os.path.join(dir_path, 'log')
 
-if platform == "linux" or platform == "linux2":
-    subprocess.Popen(['xmodmap', '.Xmodmap_disable'])
-elif platform == "win32":
-    from win32com.client import Dispatch
-    subprocess.Popen(['C:\\Program Files\\AutoHotkey\\AutoHotkey.exe', os.path.join(dir_path, 'autoHotKey_disable.aht')])
-
-
 
 class DesignerMainWindow(QMainWindow):
     
@@ -97,7 +90,7 @@ class DesignerMainWindow(QMainWindow):
         # self.btn_sair.clicked.connect(self.fechar)
         self.center()
         self.permitir_min = False
-        self.setWindowIcon(QtGui.QIcon(os.path.join(img_path, "icon.png")))
+        self.setWindowIcon(QtGui.QIcon(os.path.join(img_path, "icon.ico")))
         # self.installEventFilter(AltTab())
 
         # if platform == "linux" or platform == "linux2":
@@ -406,7 +399,7 @@ class TelaTodosUsuarios(QMainWindow):
     def __init__(self, janelaPrincipal, parent=None):
         super(TelaTodosUsuarios, self).__init__(parent)
         uic.loadUi(os.path.join(GUI_path, 'telaTodosUsuarios.ui'), self)
-        self.setWindowIcon(QtGui.QIcon(os.path.join(img_path, "icon.png")))
+        self.setWindowIcon(QtGui.QIcon(os.path.join(img_path, "icon.ico")))
 
         self.janelaPrincipal = janelaPrincipal
         self.popular_combobox()
@@ -493,11 +486,11 @@ class TelaHistoricoDeUso(QMainWindow):
     def __init__(self, janelaPrincipal, parent=None):
         super(TelaHistoricoDeUso, self).__init__(parent)
         uic.loadUi(os.path.join(GUI_path, 'telaHistDeUso.ui'), self)
-        self.setWindowIcon(QtGui.QIcon(os.path.join(img_path, "icon.png")))
+        self.setWindowIcon(QtGui.QIcon(os.path.join(img_path, "icon.ico")))
 
         self.janelaPrincipal = janelaPrincipal
         self.popular_combobox()
-        self.setWindowIcon(QtGui.QIcon('./imagens/icon.png'))
+        self.setWindowIcon(QtGui.QIcon('./imagens/icon.ico'))
 
         self.cbx_logins.activated.connect(self.login_selecionado)
         self.cbx_grupos.activated.connect(self.grupo_selecionado)
@@ -758,7 +751,7 @@ class NovoUsuario(QMainWindow):
     def __init__(self, janelaPrincipal, parent=None):
         super(NovoUsuario, self).__init__(parent)
         uic.loadUi(os.path.join(GUI_path, 'telaRegistrarNovo.ui'), self)
-        self.setWindowIcon(QtGui.QIcon(os.path.join(img_path, "icon.png")))
+        self.setWindowIcon(QtGui.QIcon(os.path.join(img_path, "icon.ico")))
 
         self.janelaPrincipal = janelaPrincipal
         self.txt_password.setEchoMode(QtWidgets.QLineEdit.Password)
@@ -839,7 +832,7 @@ class NovoAdmin(QMainWindow):
     def __init__(self, janelaPrincipal, parent=None):
         super(NovoAdmin, self).__init__(parent)
         uic.loadUi(os.path.join(GUI_path, 'telaRegistrarNovoAdmin.ui'), self)
-        self.setWindowIcon(QtGui.QIcon(os.path.join(img_path, "icon.png")))
+        self.setWindowIcon(QtGui.QIcon(os.path.join(img_path, "icon.ico")))
 
         self.janelaPrincipal = janelaPrincipal
         self.txt_password.setEchoMode(QtWidgets.QLineEdit.Password)
@@ -907,7 +900,7 @@ class NovoAdmin(QMainWindow):
                 # comando = ['copy', 'Run_RegistroDeUso.bat', 'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp']
                 # process = subprocess.Popen(comando, stdout=subprocess.PIPE, stderr=None, shell=True)
                 # output = process.communicate()
-                QMessageBox.about(self, "Leia o README.", "Copie o arquivo Run_RegistroDeUso.bat para a pasta de inicialização para ajeitar a inicialização automática!")        
+                # QMessageBox.about(self, "Leia o README.", "Copie o arquivo Run_RegistroDeUso.bat para a pasta de inicialização para ajeitar a inicialização automática!")        
 
 
     def criar_atalho(self):
@@ -983,7 +976,7 @@ class TempoUso(QMainWindow):
     def __init__(self, janelaPrincipal, usuario, parent=None):
         super(TempoUso, self).__init__(parent)
         uic.loadUi(os.path.join(GUI_path, 'telaTempoUso.ui'), self)
-        self.setWindowIcon(QtGui.QIcon(os.path.join(img_path, "icon.png")))
+        self.setWindowIcon(QtGui.QIcon(os.path.join(img_path, "icon.ico")))
         self.login = usuario
         self.janelaPrincipal = janelaPrincipal
         self.checkThreadTimer = QtCore.QTimer(self)
@@ -1076,6 +1069,15 @@ class TempoUso(QMainWindow):
 if __name__ == "__main__":
 
     app = QApplication(sys.argv)
+
+    if platform == "linux" or platform == "linux2":
+        subprocess.Popen(['xmodmap', '.Xmodmap_disable'])
+    elif platform == "win32":
+        from win32com.client import Dispatch
+        try:
+            subprocess.Popen([os.environ["ProgramFiles"] + "\\AutoHotkey\\AutoHotkey.exe", os.path.join(dir_path, 'autoHotKey_disable.aht')])
+        except:
+            QMessageBox.about(None , "Atenção! Teclas de atalho não estão bloqueadas!", "O executável do programa AutoHotkey não está instalado ou não foi encontrado em:\r\n" + os.environ["ProgramFiles"] + "\\AutoHotkey\\AutoHotkey.exe") 
 
     splash_pix = QtGui.QPixmap(os.path.join(img_path, "splashscreen.png"))
     splash = QSplashScreen(splash_pix, QtCore.Qt.WindowStaysOnTopHint)
