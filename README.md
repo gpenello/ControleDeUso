@@ -29,7 +29,8 @@ Confira o arquivo Programa "Controle de Uso de Equipamento.pptx" para ver alguma
 Baixe e rode o arquivo de instalação "RegistroDeUso_instalador.exe". O instalador irá facilitar o processo de inicialização automática do programa. Esta versão não conta com o botão de atualização pelo Git (o botão está desativado).
 
 
-## (Windows) Passo a passo para que o programa seja inicializado automaticamente:
+# (Windows) Versão rodando em python
+## Passo a passo para que o programa seja inicializado automaticamente:
 
 No Windows, a inicialização automática deve ser feita manualmente.
   - Rodar o programa a primeira vez e cadastrar o administrador.
